@@ -135,22 +135,18 @@ def index():
     return render_template('index.html')
 
 @app.route('/digital_planner')
-@whop_required
 def digital_planner():
     return render_template('digital_planner.html')
 
 @app.route('/whiteboard')
-@whop_required
 def whiteboard():
     return render_template('whiteboard.html')
 
 @app.route('/flashcards')
-@whop_required
 def flashcards():
     return render_template('flashcards.html')
 
 @app.route('/pdf_tools')
-@whop_required
 def pdf_tools():
     return render_template('pdf_document_intelligence.html')
 
