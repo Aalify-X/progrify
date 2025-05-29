@@ -1,39 +1,42 @@
-// OAuth configuration
-const WHOP_AUTH_URL = 'https://api.whop.com/oauth/authorize';
-const CLIENT_ID = 'your_client_id_here'; // You'll get this from Whop Dashboard
-const REDIRECT_URI = window.API_BASE_URL + '/auth/callback';
-const SCOPE = 'read write';
+// Update these with your actual Whop app credentials
+const WHOP_CLIENT_ID = 'your_whop_client_id';
+const WHOP_REDIRECT_URI = encodeURIComponent('https://your-webapp.onrender.com/auth/callback');
+const WHOP_AUTH_URL = `https://whop.com/oauth/authorize?client_id=${WHOP_CLIENT_ID}&redirect_uri=${WHOP_REDIRECT_URI}&response_type=code&scope=read`;
 
-// Function to handle login
 function handleLogin() {
-    // Construct the OAuth authorization URL
-    const authUrl = `${WHOP_AUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPE)}&response_type=token`;
-    
-    // Open the authorization URL in a new window
-    window.location.href = authUrl;
+    window.location.href = WHOP_AUTH_URL;
 }
 
-// Function to check authentication state
-function checkAuthState() {
-    const token = localStorage.getItem('whop_token');
-    if (token) {
-        document.getElementById('lblAuthState').textContent = 'Welcome back!';
-        document.getElementById('btnLogin').style.display = 'none';
-        // Enable features
-        document.querySelectorAll('.feature').forEach(feature => {
-            feature.style.pointerEvents = 'auto';
-            feature.style.opacity = '1';
-        });
-    } else {
-        document.getElementById('lblAuthState').textContent = 'Please sign in to continue';
-        document.getElementById('btnLogin').style.display = 'block';
-        // Disable features
-        document.querySelectorAll('.feature').forEach(feature => {
-            feature.style.pointerEvents = 'none';
-            feature.style.opacity = '0.5';
-        });
+// Add this to check for auth code in URL
+function checkForAuthCode() {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    
+    if (code) {
+        // Exchange code for token
+        exchangeCodeForToken(code);
     }
 }
 
-// Check auth state when page loads
-window.addEventListener('load', checkAuthState);
+async function exchangeCodeForToken(code) {
+    try {
+        const response = await fetch('/api/auth/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ code })
+        });
+        
+        const data = await response.json();
+        if (data.access_token) {
+            localStorage.setItem('whop_token', data.access_token);
+            checkAuthState();
+        }
+    } catch (error) {
+        console.error('Auth error:', error);
+    }
+}
+
+// Call this on page load
+checkForAuthCode();
