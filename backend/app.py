@@ -38,7 +38,7 @@ CORS(app, origins=WHOP_DOMAINS, supports_credentials=True)
 # Whop OAuth Configuration
 WHOP_CLIENT_ID = os.getenv('WHOP_CLIENT_ID')
 WHOP_CLIENT_SECRET = os.getenv('WHOP_CLIENT_SECRET')
-WHOP_REDIRECT_URI = os.getenv('WHOP_REDIRECT_URI', 'https://your-webapp.onrender.com/auth/callback')
+WHOP_REDIRECT_URI = os.getenv('WHOP_REDIRECT_URI', 'https://progrify.onrender.com/auth/callback')
 
 # Middleware to verify Whop access
 def whop_required(f):

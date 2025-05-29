@@ -39,7 +39,7 @@
   },
   "proxy": {
     "/api": {
-      "target": "https://your-webapp.onrender.com",
+      "target": "https://progrify.onrender.com",
       "secure": true,
       "changeOrigin": true,
       "headers": {

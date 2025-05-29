@@ -1,6 +1,6 @@
 // Update these with your actual Whop app credentials
 const WHOP_CLIENT_ID = 'your_whop_client_id';
-const WHOP_REDIRECT_URI = encodeURIComponent('https://your-webapp.onrender.com/auth/callback');
+const WHOP_REDIRECT_URI = encodeURIComponent('https://progrify.onrender.com/auth/callback');
 const WHOP_AUTH_URL = `https://whop.com/oauth/authorize?client_id=${WHOP_CLIENT_ID}&redirect_uri=${WHOP_REDIRECT_URI}&response_type=code&scope=read`;
 
 function handleLogin() {
