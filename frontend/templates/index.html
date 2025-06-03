@@ -8,12 +8,20 @@
 
 
 {% block content %}
+
 <script>
     window.API_BASE_URL = "[https://progrify.onrender.com](https://progrify.onrender.com)";
 </script>
+
 <div class="container">
   
     <div id="app">
+
+        <div class="header">
+            <h1>Your personal study space.</h1>
+            <p>A productivity companion for digital life.</p>
+        </div>
+
         <div class="content">
             <div class="features">
                 <div class="feature" onclick="window.location.href='{{ url_for('digital_planner') }}'">
@@ -36,5 +44,6 @@
         </div>
     </div>
 </div>
+
 
 {% endblock %}

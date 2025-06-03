@@ -81,20 +81,6 @@
             white-space: nowrap;
         }
 
-        .logout-btn {
-            padding: 8px 16px;
-            background-color: #f44336;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        .logout-btn:hover {
-            background-color: #d32f2f;
-        }
-
-
         @media (max-width: 768px) {
             .banner {
                 padding: 0.75rem;
@@ -181,54 +167,14 @@
             <div class="banner-subtitle">Powered by TIRON</div>
         </div>
         <div class="banner-actions">
-            {% if request.endpoint != 'home' %}
+            {% if request.endpoint != 'index' %}
             <a href="{{ url_for('index') }}" class="back-home-btn">🏠 Home</a>
             {% endif %}
-            {% if session.get('user') %}
-            <a href="{{ url_for('auth.logout') }}">Logout</a>
-            {% endif %}
-
         </div>
     </div>
 
     <div class="content">
         {% block content %}{% endblock %}
-    </div>
-
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-
-    <!-- Firebase SDK initialization script -->
-    <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
-
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyAO0IBFTx6q-Pi2ILMDAoWZmpeg95EdGAY",
-        authDomain: "progrify-881a2.firebaseapp.com",
-        projectId: "progrify-881a2",
-        storageBucket: "progrify-881a2.firebasestorage.app",
-        messagingSenderId: "53140925056",
-        appId: "1:53140925056:web:53fb4febd3c816cb675465"
-      };
-
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-    </script>
-
-    <!-- Link to Firebase logic -->
-    <script src="/static/firebase.js"></script>
-
-    <!-- Email Modal -->
-    <div id="emailModal" style="display:none;">
-        <input type="email" id="emailInput" placeholder="Enter your email">
-        <button id="sendLink">Send Magic Link</button>
     </div>
 
     {% block scripts %}{% endblock %}
