@@ -4,46 +4,339 @@
 
 {% block additional_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+<style>
+    :root {
+        --theme-color: #FF6B6B;
+        --theme-light: rgba(255, 107, 107, 0.1);
+        --accent-color: #4ECDC4;
+        --dark-text: #333333;
+        --light-text: #777777;
+    }
+
+    .gamified-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: var(--theme-light);
+        border-radius: 12px;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--theme-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        margin-right: 20px;
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    .user-info {
+        flex: 1;
+    }
+
+    .user-name {
+        font-size: 1.5rem;
+        color: var(--theme-color);
+        margin: 0 0 5px 0;
+    }
+
+    .user-level {
+        font-size: 0.9rem;
+        color: var(--light-text);
+    }
+
+    .xp-bar-container {
+        margin-top: 10px;
+    }
+
+    .xp-bar {
+        height: 10px;
+        background: #f0f0f0;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .xp-progress {
+        height: 100%;
+        background: linear-gradient(to right, var(--theme-color), #FF8E8E);
+        width: 45%;
+        border-radius: 5px;
+        transition: width 0.5s ease;
+    }
+
+    .xp-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: var(--light-text);
+        margin-top: 5px;
+    }
+
+    .achievements {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .achievement-badge {
+        background: gold;
+        color: #333;
+        padding: 3px 8px;
+        border-radius: 15px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .achievement-badge i {
+        font-size: 0.8rem;
+    }
+
+    .features-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .features-header h2 {
+        color: var(--theme-color);
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .features-header p {
+        color: var(--light-text);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        padding: 25px;
+        transition: all 0.3s;
+        border: 2px solid var(--theme-light);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(255, 107, 107, 0.2);
+        border-color: var(--theme-color);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        color: var(--theme-color);
+        margin-bottom: 15px;
+    }
+
+    .feature-title {
+        font-size: 1.3rem;
+        color: var(--theme-color);
+        margin: 0 0 10px 0;
+    }
+
+    .feature-desc {
+        color: var(--light-text);
+        margin: 0 0 15px 0;
+        font-size: 0.95rem;
+    }
+
+    .feature-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background: var(--theme-color);
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .feature-btn:hover {
+        background: #E55F5F;
+        transform: translateY(-2px);
+    }
+
+    .feature-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: var(--accent-color);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+
+    .daily-challenge {
+        margin-top: 40px;
+        background: linear-gradient(135deg, var(--theme-color), #FF8E8E);
+        padding: 25px;
+        border-radius: 12px;
+        color: white;
+        text-align: center;
+    }
+
+    .challenge-title {
+        font-size: 1.5rem;
+        margin: 0 0 15px 0;
+    }
+
+    .challenge-desc {
+        margin: 0 0 20px 0;
+        font-size: 1rem;
+    }
+
+    .challenge-btn {
+        display: inline-block;
+        padding: 12px 25px;
+        background: white;
+        color: var(--theme-color);
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .challenge-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 768px) {
+        .gamified-container {
+            padding: 20px;
+        }
+        
+        .user-profile {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .avatar {
+            margin-right: 0;
+            margin-bottom: 15px;
+        }
+        
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}
 
-
 {% block content %}
-
-<script>
-    window.API_BASE_URL = "[https://progrify.onrender.com](https://progrify.onrender.com)";
-</script>
-
-<div class="container">
-  
-    <div id="app">
-
-        <div class="header">
-            <h1>Your personal study space.</h1>
-            <p>A productivity companion for digital life.</p>
+<div class="gamified-container">
+    <div class="user-profile">
+        <div class="avatar">
+            <i class="fas fa-user"></i>
         </div>
-
-        <div class="content">
-            <div class="features">
-                <div class="feature" onclick="window.location.href='{{ url_for('digital_planner') }}'">
-                    <h3>🗓️ Digital Planner</h3>
-                    <p>Organize your daily schedule</p>
+        <div class="user-info">
+            <h3 class="user-name">Welcome, Explorer!</h3>
+            <p class="user-level">Level 3 Productivity Master</p>
+            
+            <div class="xp-bar-container">
+                <div class="xp-bar">
+                    <div class="xp-progress" style="width: 45%;"></div>
                 </div>
-                <div class="feature" onclick="window.location.href='{{ url_for('pdf_tools') }}'">
-                    <h3>📄 Document Intelligence</h3>
-                    <p>Transform PDFs into actionable insights</p>
+                <div class="xp-info">
+                    <span>450/1000 XP</span>
+                    <span>45% to next level</span>
                 </div>
-                <div class="feature" onclick="window.location.href='{{ url_for('flashcards') }}'">
-                    <h3>🧠 Smart Flashcards</h3>
-                    <p>Create and organize your learning</p>
+            </div>
+            
+            <div class="achievements">
+                <div class="achievement-badge">
+                    <i class="fas fa-trophy"></i> 5-Day Streak
                 </div>
-                <div class="feature" onclick="window.location.href='{{ url_for('whiteboard') }}'">
-                    <h3>🧽 Whiteboard</h3>
-                    <p>Doodle and sketch ideas</p>
+                <div class="achievement-badge">
+                    <i class="fas fa-star"></i> Quick Learner
                 </div>
             </div>
         </div>
     </div>
+    
+    <div class="features-header">
+        <h2><i class="fas fa-gamepad"></i> Your Productivity Toolkit</h2>
+        <p>Complete tasks and earn XP to level up your productivity skills!</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card" onclick="window.location.href='{{ url_for('digital_planner') }}'">
+            <div class="feature-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3 class="feature-title">Digital Planner</h3>
+            <p class="feature-desc">Organize your daily schedule and earn XP for completing tasks</p>
+            <a href="{{ url_for('digital_planner') }}" class="feature-btn">Start Planning</a>
+            <div class="feature-badge">+10 XP per task</div>
+        </div>
+        
+        <div class="feature-card" onclick="window.location.href='{{ url_for('pdf_tools') }}'">
+            <div class="feature-icon">
+                <i class="fas fa-file-pdf"></i>
+            </div>
+            <h3 class="feature-title">Document Intelligence</h3>
+            <p class="feature-desc">Transform PDFs into actionable insights and summaries</p>
+            <a href="{{ url_for('pdf_tools') }}" class="feature-btn">Analyze Docs</a>
+            <div class="feature-badge">+25 XP per doc</div>
+        </div>
+        
+        <div class="feature-card" onclick="window.location.href='{{ url_for('flashcards') }}'">
+            <div class="feature-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3 class="feature-title">Smart Flashcards</h3>
+            <p class="feature-desc">Create and study flashcards to boost your memory</p>
+            <a href="{{ url_for('flashcards') }}" class="feature-btn">Start Learning</a>
+            <div class="feature-badge">+5 XP per card</div>
+        </div>
+        
+        <div class="feature-card" onclick="window.location.href='{{ url_for('whiteboard') }}'">
+            <div class="feature-icon">
+                <i class="fas fa-paint-brush"></i>
+            </div>
+            <h3 class="feature-title">Creative Canvas</h3>
+            <p class="feature-desc">Doodle, sketch ideas and express your creativity</p>
+            <a href="{{ url_for('whiteboard') }}" class="feature-btn">Start Drawing</a>
+            <div class="feature-badge">+15 XP per drawing</div>
+        </div>
+    </div>
+    
+    <div class="daily-challenge">
+        <h3 class="challenge-title"><i class="fas fa-medal"></i> Daily Challenge</h3>
+        <p class="challenge-desc">Complete 5 tasks today to earn a bonus 50 XP!</p>
+        <a href="{{ url_for('digital_planner') }}" class="challenge-btn">Accept Challenge</a>
+    </div>
 </div>
-
-
 {% endblock %}

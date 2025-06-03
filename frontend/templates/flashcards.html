@@ -1,59 +1,150 @@
 {% extends "base.html" %}
 
+{% block title %}Smart Flashcards | Progrify{% endblock %}
+
 {% block additional_styles %}
 <style>
-    .flashcard-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        background-color: var(--background-color);
+    :root {
+        --theme-color: #FF6B6B;
+        --theme-light: rgba(255, 107, 107, 0.1);
+        --accent-color: #4ECDC4;
+        --dark-text: #333333;
+        --light-text: #777777;
     }
 
-    .flashcard-creator {
-        width: 100%;
-        max-width: 600px;
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        padding: 20px;
-        margin-bottom: 20px;
+    .flashcard-game {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     }
 
-    .flashcard-input {
-        display: flex;
-        flex-direction: column;
+    .game-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .game-header h2 {
+        color: var(--theme-color);
+        font-size: 2rem;
         margin-bottom: 15px;
     }
 
-    .flashcard-input label {
-        margin-bottom: 5px;
-        color: var(--text-color);
-        font-weight: bold;
+    .stats-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        text-align: center;
     }
 
-    .flashcard-input input, 
+    .stat-box {
+        background: var(--theme-light);
+        padding: 15px;
+        border-radius: 10px;
+        flex: 1;
+        margin: 0 10px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--theme-color);
+        margin: 5px 0;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--light-text);
+    }
+
+    .flashcard-creator {
+        background: var(--theme-light);
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+
+    .creator-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .creator-header h3 {
+        color: var(--theme-color);
+        margin: 0;
+        flex: 1;
+    }
+
+    .flashcard-input {
+        margin-bottom: 20px;
+    }
+
+    .flashcard-input label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--dark-text);
+        font-weight: 500;
+    }
+
+    .flashcard-input input,
     .flashcard-input textarea {
-        padding: 10px;
-        border: 2px solid var(--button-color);
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #eee;
         border-radius: 8px;
-        font-size: 16px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .flashcard-input textarea {
+        min-height: 100px;
+    }
+
+    .flashcard-input input:focus,
+    .flashcard-input textarea:focus {
+        border-color: var(--theme-color);
+        outline: none;
+    }
+
+    .btn {
+        background: var(--theme-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    .btn i {
+        margin-right: 8px;
     }
 
     .flashcard-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 20px;
-        width: 100%;
+        margin-top: 30px;
     }
 
     .flashcard {
-        background-color: white;
+        background: white;
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         perspective: 1000px;
         height: 200px;
-        width: 300px;
         position: relative;
         transition: transform 0.6s;
         transform-style: preserve-3d;
@@ -64,7 +155,7 @@
         transform: rotateY(180deg);
     }
 
-    .flashcard-front, 
+    .flashcard-front,
     .flashcard-back {
         position: absolute;
         width: 100%;
@@ -77,147 +168,398 @@
         border-radius: 12px;
         text-align: center;
         font-size: 18px;
-        top: 0;
-        left: 0;
-        background-color: white;
-        color: black;
+        background: white;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .flashcard-front {
+        background: linear-gradient(135deg, var(--theme-light), white);
+        color: var(--theme-color);
+        font-weight: bold;
     }
 
     .flashcard-back {
         transform: rotateY(180deg);
-    }
-
-    .delete-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: rgba(252, 0, 0, 0.6);
+        background: linear-gradient(135deg, var(--accent-color), #8CECF5);
         color: white;
-        border: none;
-        border-radius: 50%;
-        width: 35px;
-        height: 35px;
+    }
+
+    .flashcard-actions {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        z-index: 10;
-        font-size: 18px;
+        gap: 5px;
     }
 
-    .delete-btn:hover {
-        background-color: rgba(252, 0, 0, 0.8);
-    }
-
-    .create-btn {
-        background-color: var(--button-color);
-        color: rgb(248, 117, 117);
+    .action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
         border: none;
-        padding: 12px 20px;
-        border-radius: 8px;
+        background: rgba(255,255,255,0.8);
+        color: var(--theme-color);
         cursor: pointer;
-        transition: background-color 0.3s;
-        width: 100%;
-        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
     }
 
-    .create-btn:hover {
-        opacity: 0.9;
+    .action-btn:hover {
+        transform: scale(1.1);
     }
 
+    .difficulty-selector {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        display: flex;
+        gap: 5px;
+    }
+
+    .difficulty-btn {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+    }
+
+    .easy { background: #4CAF50; }
+    .medium { background: #FFC107; }
+    .hard { background: #F44336; }
+
+    .progress-container {
+        margin-top: 30px;
+        background: #f5f5f5;
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    .progress-bar {
+        height: 10px;
+        background: #e0e0e0;
+        border-radius: 5px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(to right, var(--accent-color), var(--theme-color));
+        width: 0%;
+        border-radius: 5px;
+        transition: width 0.5s ease;
+    }
+
+    .progress-text {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: var(--light-text);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--light-text);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--theme-light);
+        margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .flashcard-game {
+            padding: 20px;
+        }
+        
+        .stats-container {
+            flex-direction: column;
+        }
+        
+        .stat-box {
+            margin: 10px 0;
+        }
+        
+        .flashcard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}
 
 {% block content %}
-<div class="flashcard-container">
-    <div class="flashcard-creator">
-        <div class="flashcard-input">
-            <label>Front text</label>
-            <input type="text" id="front-input" placeholder="Enter your front text">
-        </div>
-        <div class="flashcard-input">
-            <label>Back text</label>
-            <textarea id="back-input" placeholder="Enter the back text"></textarea>
-        </div>
-        <button class="create-btn" onclick="createFlashcard()">Create Flashcard</button>
+<div class="flashcard-game">
+    <div class="game-header">
+        <h2><i class="fas fa-brain"></i> Smart Flashcards</h2>
+        <p>Create and study flashcards to boost your memory!</p>
     </div>
-
-    <div class="flashcard-grid" id="flashcard-grid"></div>
+    
+    <div class="stats-container">
+        <div class="stat-box">
+            <div class="stat-value" id="cards-created">0</div>
+            <div class="stat-label">Cards Created</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="cards-mastered">0</div>
+            <div class="stat-label">Cards Mastered</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="study-streak">0</div>
+            <div class="stat-label">Day Streak</div>
+        </div>
+    </div>
+    
+    <div class="flashcard-creator">
+        <div class="creator-header">
+            <h3><i class="fas fa-plus-circle"></i> Create New Flashcard</h3>
+        </div>
+        
+        <div class="flashcard-input">
+            <label>Front (Question)</label>
+            <input type="text" id="front-input" placeholder="Enter your question or term">
+        </div>
+        
+        <div class="flashcard-input">
+            <label>Back (Answer)</label>
+            <textarea id="back-input" placeholder="Enter the answer or definition"></textarea>
+        </div>
+        
+        <button class="btn" onclick="createFlashcard()">
+            <i class="fas fa-magic"></i> Create Flashcard
+        </button>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-text">
+            <span>Learning Progress</span>
+            <span id="progress-percent">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+    
+    <div class="flashcard-grid" id="flashcard-grid">
+        <div class="empty-state" id="empty-state">
+            <i class="fas fa-lightbulb"></i>
+            <h3>No Flashcards Yet</h3>
+            <p>Create your first flashcard to get started!</p>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-class FlashcardManager {
-    constructor() {
-        this.flashcards = JSON.parse(localStorage.getItem('flashcards') || '[]');
-        this.renderFlashcards();
-    }
-
-    createFlashcard() {
-        const frontInput = document.getElementById('front-input');
-        const backInput = document.getElementById('back-input');
-        
-        if (!frontInput.value.trim() || !backInput.value.trim()) {
-            alert('Please enter text for both sides');
-            return;
+    class FlashcardGame {
+        constructor() {
+            this.flashcards = JSON.parse(localStorage.getItem('flashcards') || [];
+            this.stats = JSON.parse(localStorage.getItem('flashcardStats')) || {
+                created: 0,
+                mastered: 0,
+                streak: 0,
+                lastStudyDate: null
+            };
+            this.renderStats();
+            this.renderFlashcards();
+            this.checkStudyStreak();
         }
+        
+        checkStudyStreak() {
+            const today = new Date().toDateString();
+            const lastDate = this.stats.lastStudyDate ? new Date(this.stats.lastStudyDate).toDateString() : null;
+            
+            if (lastDate === today) return;
+            
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toDateString();
+            
+            if (lastDate === yesterdayStr) {
+                this.stats.streak++;
+            } else if (lastDate !== today) {
+                this.stats.streak = 0;
+            }
+            
+            this.stats.lastStudyDate = new Date();
+            this.saveStats();
+            this.renderStats();
+        }
+        
+        createFlashcard() {
+            const frontInput = document.getElementById('front-input');
+            const backInput = document.getElementById('back-input');
 
-        const newFlashcard = {
-            id: Date.now(),
-            front: frontInput.value.trim(),
-            back: backInput.value.trim()
-        };
+            if (!frontInput.value.trim() || !backInput.value.trim()) {
+                alert('Please enter text for both sides');
+                return;
+            }
 
-        this.flashcards.push(newFlashcard);
-        this.saveFlashcards();
-        this.renderFlashcards();
+            const newFlashcard = {
+                id: Date.now(),
+                front: frontInput.value.trim(),
+                back: backInput.value.trim(),
+                difficulty: 'unrated',
+                mastered: false
+            };
 
-        // Clear inputs
-        frontInput.value = '';
-        backInput.value = '';
-    }
+            this.flashcards.push(newFlashcard);
+            this.stats.created++;
+            this.saveFlashcards();
+            this.saveStats();
+            this.renderFlashcards();
+            this.renderStats();
 
-    renderFlashcards() {
-        const grid = document.getElementById('flashcard-grid');
-        grid.innerHTML = '';
+            // Clear inputs
+            frontInput.value = '';
+            backInput.value = '';
+            
+            // Hide empty state
+            document.getElementById('empty-state').style.display = 'none';
+            
+            // Show success animation
+            this.showSuccess('Flashcard created! +10 XP');
+        }
+        
+        deleteFlashcard(id) {
+            this.flashcards = this.flashcards.filter(card => card.id !== id);
+            this.saveFlashcards();
+            this.renderFlashcards();
+            
+            if (this.flashcards.length === 0) {
+                document.getElementById('empty-state').style.display = 'block';
+            }
+        }
+        
+        setDifficulty(id, difficulty) {
+            const card = this.flashcards.find(c => c.id === id);
+            if (card) {
+                card.difficulty = difficulty;
+                this.saveFlashcards();
+                this.renderFlashcards();
+            }
+        }
+        
+        toggleMastered(id) {
+            const card = this.flashcards.find(c => c.id === id);
+            if (card) {
+                card.mastered = !card.mastered;
+                this.stats.mastered += card.mastered ? 1 : -1;
+                this.saveFlashcards();
+                this.saveStats();
+                this.renderFlashcards();
+                this.renderStats();
+                
+                if (card.mastered) {
+                    this.showSuccess('Card mastered! +25 XP');
+                }
+            }
+        }
+        
+        renderFlashcards() {
+            const grid = document.getElementById('flashcard-grid');
+            grid.innerHTML = '';
+            
+            if (this.flashcards.length === 0) {
+                document.getElementById('empty-state').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('empty-state').style.display = 'none';
+            }
+            
+            // Calculate progress
+            const masteredCount = this.flashcards.filter(c => c.mastered).length;
+            const progress = Math.round((masteredCount / this.flashcards.length) * 100);
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            document.getElementById('progress-percent').textContent = `${progress}%`;
 
-        this.flashcards.forEach((card, index) => {
-            const flashcardElement = document.createElement('div');
-            flashcardElement.className = 'flashcard';
-            flashcardElement.innerHTML = `
-                <button class="delete-btn" onclick="flashcardManager.deleteFlashcard(${index})">✕</button>
-                <div class="flashcard-front">${card.front}</div>
-                <div class="flashcard-back">${card.back}</div>
-            `;
+            this.flashcards.forEach(card => {
+                const flashcardElement = document.createElement('div');
+                flashcardElement.className = `flashcard ${card.mastered ? 'mastered' : ''}`;
+                flashcardElement.innerHTML = `
+                    <div class="flashcard-front">${card.front}</div>
+                    <div class="flashcard-back">${card.back}</div>
+                    <div class="flashcard-actions">
+                        <button class="action-btn" onclick="flashcardGame.toggleMastered(${card.id})">
+                            <i class="fas ${card.mastered ? 'fa-check-circle' : 'fa-check'}"></i>
+                        </button>
+                        <button class="action-btn" onclick="flashcardGame.deleteFlashcard(${card.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn easy ${card.difficulty === 'easy' ? 'active' : ''}" 
+                            onclick="flashcardGame.setDifficulty(${card.id}, 'easy')"></button>
+                        <button class="difficulty-btn medium ${card.difficulty === 'medium' ? 'active' : ''}" 
+                            onclick="flashcardGame.setDifficulty(${card.id}, 'medium')"></button>
+                        <button class="difficulty-btn hard ${card.difficulty === 'hard' ? 'active' : ''}" 
+                            onclick="flashcardGame.setDifficulty(${card.id}, 'hard')"></button>
+                    </div>
+                `;
 
-            flashcardElement.addEventListener('click', () => {
-                flashcardElement.classList.toggle('flipped');
+                flashcardElement.addEventListener('click', (e) => {
+                    // Don't flip if clicking on buttons
+                    if (!e.target.closest('.flashcard-actions') && !e.target.closest('.difficulty-selector')) {
+                        flashcardElement.classList.toggle('flipped');
+                    }
+                });
+
+                grid.appendChild(flashcardElement);
             });
-
-            grid.appendChild(flashcardElement);
-        });
+        }
+        
+        renderStats() {
+            document.getElementById('cards-created').textContent = this.stats.created;
+            document.getElementById('cards-mastered').textContent = this.stats.mastered;
+            document.getElementById('study-streak').textContent = this.stats.streak;
+        }
+        
+        showSuccess(message) {
+            const notification = document.createElement('div');
+            notification.className = 'success-notification';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle"></i> ${message}
+            `;
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.background = '#4CAF50';
+            notification.style.color = 'white';
+            notification.style.padding = '15px 25px';
+            notification.style.borderRadius = '8px';
+            notification.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            notification.style.zIndex = '1000';
+            notification.style.animation = 'slideIn 0.5s forwards';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.5s forwards';
+                setTimeout(() => document.body.removeChild(notification), 500);
+            }, 3000);
+        }
+        
+        saveFlashcards() {
+            localStorage.setItem('flashcards', JSON.stringify(this.flashcards));
+        }
+        
+        saveStats() {
+            localStorage.setItem('flashcardStats', JSON.stringify(this.stats));
+        }
     }
 
-    deleteFlashcard(index) {
-        this.flashcards.splice(index, 1);
-        this.saveFlashcards();
-        this.renderFlashcards();
+    // Global instance
+    const flashcardGame = new FlashcardGame();
+
+    // Global functions to work with the game
+    function createFlashcard() {
+        flashcardGame.createFlashcard();
     }
-
-    saveFlashcards() {
-        localStorage.setItem('flashcards', JSON.stringify(this.flashcards));
-    }
-}
-
-// Global instance
-const flashcardManager = new FlashcardManager();
-
-// Global functions to work with the manager
-function createFlashcard() {
-    flashcardManager.createFlashcard();
-}
 </script>
 {% endblock %}

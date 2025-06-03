@@ -1,97 +1,441 @@
 {% extends "base.html" %}
 
-{% block title %}Digital Planner | AalifyX{% endblock %}
+{% block title %}Digital Planner | Progrify{% endblock %}
 
 {% block additional_styles %}
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { background: #f4f4f4; color: #333; padding: 20px; transition: 0.3s; }
-    .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); }
-    h2 { text-align: center; margin-bottom: 15px; }
-    .btn { background: #FF847C; color: white; padding: 10px; border: none; cursor: pointer; width: 100%; margin-top: 10px; border-radius: 5px; }
-    .btn:hover { background: #fe7066; }
-    input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; }
-    ul { list-style: none; padding: 0; }
-    ul li { background: #eee; padding: 10px; margin: 5px 0; display: flex; justify-content: space-between; border-radius: 5px; }
-    .delete { background: red; color: white; border: none; padding: 5px; cursor: pointer; border-radius: 3px; }
-    .dark-mode { background: #333; color: white; }
+    :root {
+        --theme-color: #FF6B6B;
+        --theme-light: rgba(255, 107, 107, 0.1);
+        --accent-color: #4ECDC4;
+        --dark-text: #333333;
+        --light-text: #777777;
+    }
+
+    .planner-container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .planner-header {
+        text-align: center;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .planner-header h2 {
+        color: var(--theme-color);
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .xp-bar {
+        height: 10px;
+        background: #f0f0f0;
+        border-radius: 5px;
+        margin: 15px 0;
+        overflow: hidden;
+    }
+
+    .xp-progress {
+        height: 100%;
+        background: linear-gradient(to right, var(--theme-color), #FF8E8E);
+        width: 30%;
+        border-radius: 5px;
+        transition: width 0.5s ease;
+    }
+
+    .xp-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: var(--light-text);
+    }
+
+    .planner-section {
+        margin: 25px 0;
+        padding: 20px;
+        background: var(--theme-light);
+        border-radius: 10px;
+        border-left: 5px solid var(--theme-color);
+    }
+
+    .planner-section h3 {
+        color: var(--theme-color);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-icon {
+        margin-right: 10px;
+        font-size: 1.5rem;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    input, textarea {
+        flex: 1;
+        padding: 12px 15px;
+        border: 2px solid #eee;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    input:focus, textarea:focus {
+        border-color: var(--theme-color);
+        outline: none;
+    }
+
+    .btn {
+        background: var(--theme-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    .btn i {
+        margin-right: 8px;
+    }
+
+    .item-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .item {
+        background: white;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+
+    .item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .item-content {
+        flex: 1;
+    }
+
+    .item-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .complete-btn, .delete-btn {
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .complete-btn {
+        background: var(--accent-color);
+        color: white;
+        border: none;
+    }
+
+    .complete-btn:hover {
+        background: #3BBBB3;
+    }
+
+    .delete-btn {
+        background: #FF5252;
+        color: white;
+        border: none;
+    }
+
+    .delete-btn:hover {
+        background: #E53935;
+    }
+
+    .completed {
+        opacity: 0.7;
+        text-decoration: line-through;
+        background: #f9f9f9;
+    }
+
+    .achievement-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: gold;
+        color: #333;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .stats {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .stat-box {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        flex: 1;
+        margin: 0 10px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--theme-color);
+        margin: 5px 0;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--light-text);
+    }
+
+    @media (max-width: 768px) {
+        .planner-container {
+            padding: 20px;
+        }
+        
+        .input-group {
+            flex-direction: column;
+        }
+        
+        .stats {
+            flex-direction: column;
+        }
+        
+        .stat-box {
+            margin: 10px 0;
+        }
+    }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>📅 Digital Planner</h2>
+<div class="planner-container">
+    <div class="achievement-badge">
+        <i class="fas fa-trophy"></i> Productivity Master
+    </div>
+    
+    <div class="planner-header">
+        <h2><i class="fas fa-calendar-alt"></i> Digital Planner</h2>
+        <p>Organize your day and earn XP for completing tasks!</p>
+        
+        <div class="xp-bar">
+            <div class="xp-progress" id="xp-bar"></div>
+        </div>
+        <div class="xp-info">
+            <span>Level 3</span>
+            <span>450/1000 XP</span>
+        </div>
+    </div>
+    
+    <div class="stats">
+        <div class="stat-box">
+            <div class="stat-value" id="tasks-completed">12</div>
+            <div class="stat-label">Tasks Completed</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="streak-days">5</div>
+            <div class="stat-label">Day Streak</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="habits-tracked">8</div>
+            <div class="stat-label">Habits Tracked</div>
+        </div>
+    </div>
     
     <!-- Task Manager -->
-    <h3>Tasks</h3>
-    <input type="text" id="taskInput" placeholder="Enter a task">
-    <button class="btn" onclick="addTask()">Add Task</button>
-    <ul id="taskList"></ul>
-
+    <div class="planner-section">
+        <h3><i class="fas fa-tasks section-icon"></i> Task Manager</h3>
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Enter a task...">
+            <button class="btn" onclick="addTask()"><i class="fas fa-plus"></i> Add Task</button>
+        </div>
+        <ul class="item-list" id="taskList"></ul>
+    </div>
+    
     <!-- Daily Planner -->
-    <h3>Daily Schedule</h3>
-    <input type="time" id="timeInput">
-    <input type="text" id="eventInput" placeholder="Enter event">
-    <button class="btn" onclick="addEvent()">Add Event</button>
-    <ul id="eventList"></ul>
-
+    <div class="planner-section">
+        <h3><i class="fas fa-clock section-icon"></i> Daily Schedule</h3>
+        <div class="input-group">
+            <input type="time" id="timeInput">
+            <input type="text" id="eventInput" placeholder="Enter event...">
+            <button class="btn" onclick="addEvent()"><i class="fas fa-plus"></i> Add Event</button>
+        </div>
+        <ul class="item-list" id="eventList"></ul>
+    </div>
+    
     <!-- Habit Tracker -->
-    <h3>Habit Tracker</h3>
-    <input type="text" id="habitInput" placeholder="Track a habit">
-    <button class="btn" onclick="addHabit()">Add Habit</button>
-    <ul id="habitList"></ul>
-
+    <div class="planner-section">
+        <h3><i class="fas fa-chart-line section-icon"></i> Habit Tracker</h3>
+        <div class="input-group">
+            <input type="text" id="habitInput" placeholder="Track a habit...">
+            <button class="btn" onclick="addHabit()"><i class="fas fa-plus"></i> Add Habit</button>
+        </div>
+        <ul class="item-list" id="habitList"></ul>
+    </div>
+    
     <!-- Notes Section -->
-    <h3>Notes</h3>
-    <textarea id="noteInput" rows="3" placeholder="Write your notes..."></textarea>
-    <button class="btn" onclick="saveNote()">Save Note</button>
-    <p id="savedNote"></p>
-
+    <div class="planner-section">
+        <h3><i class="fas fa-sticky-note section-icon"></i> Notes</h3>
+        <textarea id="noteInput" rows="3" placeholder="Write your notes here..."></textarea>
+        <button class="btn" onclick="saveNote()"><i class="fas fa-save"></i> Save Note</button>
+        <div id="savedNote" style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px;"></div>
+    </div>
 </div>
 
 <script>
+    // XP System
+    let xp = 450;
+    let level = 3;
+    let tasksCompleted = 12;
+    let streakDays = 5;
+    let habitsTracked = 8;
+    
+    function updateXP(points) {
+        xp += points;
+        if (xp >= 1000) {
+            level++;
+            xp = xp - 1000;
+            showLevelUp();
+        }
+        document.getElementById('xp-bar').style.width = `${(xp/1000)*100}%`;
+        document.querySelector('.xp-info').innerHTML = `<span>Level ${level}</span><span>${xp}/1000 XP</span>`;
+    }
+    
+    function showLevelUp() {
+        alert(`🎉 Level Up! You've reached level ${level}!`);
+    }
+    
     // Task Manager
     function addTask() {
         let taskInput = document.getElementById("taskInput");
         if (taskInput.value.trim() === "") return;
+        
         let li = document.createElement("li");
-        li.innerHTML = taskInput.value + " <button class='delete' onclick='this.parentElement.remove()'>❌</button>";
+        li.className = "item";
+        li.innerHTML = `
+            <div class="item-content">${taskInput.value}</div>
+            <div class="item-actions">
+                <button class="complete-btn" onclick="completeTask(this)"><i class="fas fa-check"></i></button>
+                <button class="delete-btn" onclick="this.parentElement.parentElement.remove()"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
         document.getElementById("taskList").appendChild(li);
         taskInput.value = "";
     }
-
+    
+    function completeTask(btn) {
+        const item = btn.parentElement.parentElement;
+        item.classList.toggle('completed');
+        if (item.classList.contains('completed')) {
+            updateXP(25);
+            tasksCompleted++;
+            document.getElementById('tasks-completed').textContent = tasksCompleted;
+        }
+    }
+    
     // Daily Planner
     function addEvent() {
         let time = document.getElementById("timeInput").value;
         let event = document.getElementById("eventInput").value;
         if (time.trim() === "" || event.trim() === "") return;
+        
         let li = document.createElement("li");
-        li.innerHTML = time + " - " + event + " <button class='delete' onclick='this.parentElement.remove()'>❌</button>";
+        li.className = "item";
+        li.innerHTML = `
+            <div class="item-content"><strong>${time}</strong> - ${event}</div>
+            <div class="item-actions">
+                <button class="delete-btn" onclick="this.parentElement.parentElement.remove()"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
         document.getElementById("eventList").appendChild(li);
         document.getElementById("eventInput").value = "";
     }
-
+    
     // Habit Tracker
     function addHabit() {
         let habitInput = document.getElementById("habitInput");
         if (habitInput.value.trim() === "") return;
+        
         let li = document.createElement("li");
-        li.innerHTML = habitInput.value + " <button class='delete' onclick='this.parentElement.remove()'>❌</button>";
+        li.className = "item";
+        li.innerHTML = `
+            <div class="item-content">${habitInput.value}</div>
+            <div class="item-actions">
+                <button class="complete-btn" onclick="trackHabit(this)"><i class="fas fa-check"></i></button>
+                <button class="delete-btn" onclick="this.parentElement.parentElement.remove()"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
         document.getElementById("habitList").appendChild(li);
         habitInput.value = "";
+        habitsTracked++;
+        document.getElementById('habits-tracked').textContent = habitsTracked;
     }
-
+    
+    function trackHabit(btn) {
+        const item = btn.parentElement.parentElement;
+        item.classList.toggle('completed');
+        if (item.classList.contains('completed')) {
+            updateXP(10);
+        }
+    }
+    
     // Notes Section
     function saveNote() {
         let noteText = document.getElementById("noteInput").value;
         if (noteText.trim() === "") return;
-        document.getElementById("savedNote").innerText = "Saved: " + noteText;
+        document.getElementById("savedNote").innerHTML = `<strong>Saved Note:</strong><br>${noteText}`;
         document.getElementById("noteInput").value = "";
-    }
-
-    // Dark Mode Toggle
-    function toggleDarkMode() {
-        document.body.classList.toggle("dark-mode");
+        updateXP(5);
     }
 </script>
 {% endblock %}

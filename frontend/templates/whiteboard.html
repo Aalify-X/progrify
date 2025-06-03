@@ -1,335 +1,658 @@
 {% extends "base.html" %}
 
-{% block title %}Digital Canvas{% endblock %}
+{% block title %}Creative Canvas | Progrify{% endblock %}
 
 {% block additional_styles %}
 <style>
-    body {
-        background-color: #f4f6f9;
-        margin: 0;
-        padding: 0;
-        touch-action: none; /* Prevent default touch behaviors */
+    :root {
+        --theme-color: #FF6B6B;
+        --theme-light: rgba(255, 107, 107, 0.1);
+        --accent-color: #4ECDC4;
+        --dark-text: #333333;
+        --light-text: #777777;
     }
 
-    .whiteboard-container {
+    .whiteboard-game {
         max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    
-    .controls {
+        margin: 30px auto;
+        padding: 30px;
         background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .game-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .game-header h2 {
+        color: var(--theme-color);
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .stats-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .stat-box {
+        background: var(--theme-light);
         padding: 15px;
         border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        margin-bottom: 20px;
-        display: flex;
-        gap: 15px;
-        align-items: center;
-        flex-wrap: wrap;
+        flex: 1;
+        margin: 0 10px;
     }
-    
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--theme-color);
+        margin: 5px 0;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--light-text);
+    }
+
+    .controls {
+        background: var(--theme-light);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
     .tool-btn {
-        background-color: #FF847C;
-        color: white;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 5px;
+        background: white;
+        color: var(--theme-color);
+        border: 2px solid var(--theme-color);
+        padding: 10px 15px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: bold;
-        transition: background-color 0.3s;
+        transition: all 0.3s;
         display: flex;
         align-items: center;
-        gap: 5px;
-        touch-action: manipulation; /* Improve button tap behavior */
+        justify-content: center;
     }
-    
+
+    .tool-btn i {
+        margin-right: 8px;
+    }
+
     .tool-btn.active {
-        background-color: #FF6B6B;
-        box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        background: var(--theme-color);
+        color: white;
     }
-    
+
     .tool-btn:hover {
-        background-color: #FF6B6B;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.2);
     }
-    
+
+    .color-picker {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 15px 0;
+    }
+
+    .color-option {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .color-option:hover {
+        transform: scale(1.1);
+    }
+
+    .color-option.selected {
+        border-color: var(--dark-text);
+        transform: scale(1.1);
+    }
+
+    .brush-size {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 15px 0;
+    }
+
+    .size-option {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--theme-color);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .size-option:hover {
+        transform: scale(1.2);
+    }
+
+    .size-option.selected {
+        transform: scale(1.2);
+        background: var(--dark-text);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .action-btn {
+        background: var(--theme-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .action-btn i {
+        margin-right: 8px;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    .canvas-container {
+        position: relative;
+        margin-top: 20px;
+    }
+
     #canvas {
         background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         cursor: crosshair;
         width: 100%;
-        max-height: 600px;
-        touch-action: none; /* Disable browser touch actions */
+        height: 500px;
+        touch-action: none;
     }
 
-    .canvas-controls {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 15px;
-        flex-wrap: wrap;
+    .achievement-badge {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        background: gold;
+        color: #333;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        animation: pulse 2s infinite;
+        z-index: 10;
     }
 
-    .canvas-controls input[type="color"] {
-        width: 50px;
-        height: 50px;
-        padding: 0;
-        border: none;
-        background: none;
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
     }
 
-    .canvas-controls input[type="range"] {
-        flex-grow: 1;
-        min-width: 100px;
-    }
-
-    .image-upload {
-        display: none;
+    .xp-indicator {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        z-index: 10;
     }
 
     @media (max-width: 768px) {
-        .whiteboard-container {
-            padding: 10px;
+        .whiteboard-game {
+            padding: 20px;
         }
         
-        .tool-btn {
-            padding: 8px 12px;
-            font-size: 14px;
+        .toolbar {
+            justify-content: center;
         }
         
-        .canvas-controls {
-            gap: 10px;
+        .stats-container {
+            flex-direction: column;
         }
         
-        .canvas-controls input[type="color"] {
-            width: 40px;
-            height: 40px;
+        .stat-box {
+            margin: 10px 0;
+        }
+        
+        #canvas {
+            height: 400px;
         }
     }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}
 
 {% block content %}
-<div class="whiteboard-container">
+<div class="whiteboard-game">
+    <div class="game-header">
+        <h2><i class="fas fa-paint-brush"></i> Creative Canvas</h2>
+        <p>Express your ideas and earn XP for your creativity!</p>
+    </div>
+    
+    <div class="stats-container">
+        <div class="stat-box">
+            <div class="stat-value" id="drawings-created">0</div>
+            <div class="stat-label">Drawings Created</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="tools-used">0</div>
+            <div class="stat-label">Tools Used</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="creative-streak">0</div>
+            <div class="stat-label">Day Streak</div>
+        </div>
+    </div>
+    
     <div class="controls">
-        <div class="canvas-controls">
-            <button onclick="setTool('pencil')" class="tool-btn" id="pencil-btn">✏ Pencil</button>
-            <button onclick="setTool('eraser')" class="tool-btn" id="eraser-btn">🧹 Eraser</button>
-            <button onclick="setTool('line')" class="tool-btn" id="line-btn">📏 Line</button>
-            <button onclick="setTool('circle')" class="tool-btn" id="circle-btn">⭕ Circle</button>
-            <button onclick="setTool('rectangle')" class="tool-btn" id="rectangle-btn">⬜ Rectangle</button>
-            
-            <input type="color" id="color-picker" value="#000000">
-            <input type="range" id="line-width" min="1" max="50" value="5">
-            
-            <button onclick="clearCanvas()" class="tool-btn">🗑 Clear</button>
-            <button onclick="saveDrawing()" class="tool-btn">💾 Save</button>
-            
-            <label for="image-upload" class="tool-btn">📤 Import Image
-                <input type="file" id="image-upload" class="image-upload" accept="image/*">
+        <div class="toolbar">
+            <button class="tool-btn active" id="pencil-btn" data-tool="pencil">
+                <i class="fas fa-pencil-alt"></i> Pencil
+            </button>
+            <button class="tool-btn" id="eraser-btn" data-tool="eraser">
+                <i class="fas fa-eraser"></i> Eraser
+            </button>
+            <button class="tool-btn" id="line-btn" data-tool="line">
+                <i class="fas fa-slash"></i> Line
+            </button>
+            <button class="tool-btn" id="circle-btn" data-tool="circle">
+                <i class="far fa-circle"></i> Circle
+            </button>
+            <button class="tool-btn" id="rectangle-btn" data-tool="rectangle">
+                <i class="far fa-square"></i> Rectangle
+            </button>
+        </div>
+        
+        <div class="color-picker">
+            <span>Colors:</span>
+            <div class="color-option selected" style="background: #FF6B6B;" data-color="#FF6B6B"></div>
+            <div class="color-option" style="background: #4ECDC4;" data-color="#4ECDC4"></div>
+            <div class="color-option" style="background: #FFD166;" data-color="#FFD166"></div>
+            <div class="color-option" style="background: #06D6A0;" data-color="#06D6A0"></div>
+            <div class="color-option" style="background: #118AB2;" data-color="#118AB2"></div>
+            <div class="color-option" style="background: #073B4C;" data-color="#073B4C"></div>
+            <div class="color-option" style="background: #000000;" data-color="#000000"></div>
+        </div>
+        
+        <div class="brush-size">
+            <span>Size:</span>
+            <div class="size-option selected" data-size="2"></div>
+            <div class="size-option" data-size="5"></div>
+            <div class="size-option" data-size="10"></div>
+            <div class="size-option" data-size="15"></div>
+            <div class="size-option" data-size="20"></div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn" id="clear-btn">
+                <i class="fas fa-trash"></i> Clear
+            </button>
+            <button class="action-btn" id="save-btn">
+                <i class="fas fa-save"></i> Save
+            </button>
+            <label for="image-upload" class="action-btn">
+                <i class="fas fa-image"></i> Import
+                <input type="file" id="image-upload" accept="image/*" style="display: none;">
             </label>
         </div>
     </div>
-    <canvas id="canvas"></canvas>
+    
+    <div class="canvas-container">
+        <div class="achievement-badge">
+            <i class="fas fa-trophy"></i> Creative Genius
+        </div>
+        <canvas id="canvas"></canvas>
+        <div class="xp-indicator">
+            <i class="fas fa-star"></i> +5 XP for drawing
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const colorPicker = document.getElementById('color-picker');
-    const lineWidthPicker = document.getElementById('line-width');
-    const imageUpload = document.getElementById('image-upload');
-
-    let isDrawing = false;
-    let currentTool = 'pencil';
-    let lastX = 0;
-    let lastY = 0;
-    let startX = 0;
-    let startY = 0;
-    let canvasState = [];
-    let touchIdentifier = null;
-
-    // Mobile-friendly coordinate getter
-    function getCanvasCoordinates(e) {
-        const rect = canvas.getBoundingClientRect();
-        if (e.touches) {
+    class WhiteboardGame {
+        constructor() {
+            this.canvas = document.getElementById('canvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.currentTool = 'pencil';
+            this.currentColor = '#FF6B6B';
+            this.currentSize = 5;
+            this.isDrawing = false;
+            this.lastX = 0;
+            this.lastY = 0;
+            this.startX = 0;
+            this.startY = 0;
+            this.canvasState = [];
+            this.stats = JSON.parse(localStorage.getItem('whiteboardStats')) || {
+                drawings: 0,
+                toolsUsed: 0,
+                streak: 0,
+                lastUsed: null
+            };
+            
+            this.initCanvas();
+            this.initEventListeners();
+            this.checkUsageStreak();
+            this.renderStats();
+        }
+        
+        checkUsageStreak() {
+            const today = new Date().toDateString();
+            const lastDate = this.stats.lastUsed ? new Date(this.stats.lastUsed).toDateString() : null;
+            
+            if (lastDate === today) return;
+            
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toDateString();
+            
+            if (lastDate === yesterdayStr) {
+                this.stats.streak++;
+            } else if (lastDate !== today) {
+                this.stats.streak = 0;
+            }
+            
+            this.stats.lastUsed = new Date();
+            this.saveStats();
+            this.renderStats();
+        }
+        
+        initCanvas() {
+            this.resizeCanvas();
+            this.clearCanvas();
+        }
+        
+        resizeCanvas() {
+            this.canvas.width = this.canvas.offsetWidth;
+            this.canvas.height = this.canvas.offsetWidth * 0.7;
+            
+            if (this.canvasState.length > 0) {
+                this.ctx.putImageData(this.canvasState[this.canvasState.length - 1], 0, 0);
+            }
+        }
+        
+        clearCanvas() {
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.canvasState = [this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)];
+            this.stats.drawings++;
+            this.saveStats();
+            this.renderStats();
+        }
+        
+        saveDrawing() {
+            const dataURL = this.canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = 'creative_canvas.png';
+            link.href = dataURL;
+            link.click();
+            
+            this.showSuccess('Drawing saved! +10 XP');
+        }
+        
+        importImage(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const scale = Math.min(
+                        this.canvas.width / img.width,
+                        this.canvas.height / img.height
+                    );
+                    const width = img.width * scale;
+                    const height = img.height * scale;
+                    const x = (this.canvas.width - width) / 2;
+                    const y = (this.canvas.height - height) / 2;
+                    
+                    this.ctx.drawImage(img, x, y, width, height);
+                    this.canvasState.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+                    
+                    this.showSuccess('Image imported! +5 XP');
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        setTool(tool) {
+            this.currentTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tool === tool);
+            });
+            
+            this.stats.toolsUsed++;
+            this.saveStats();
+            this.renderStats();
+        }
+        
+        setColor(color) {
+            this.currentColor = color;
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.toggle('selected', option.dataset.color === color);
+            });
+        }
+        
+        setSize(size) {
+            this.currentSize = parseInt(size);
+            document.querySelectorAll('.size-option').forEach(option => {
+                option.classList.toggle('selected', parseInt(option.dataset.size) === this.currentSize);
+            });
+        }
+        
+        startDrawing(e) {
+            e.preventDefault();
+            if (e.touches && e.touches.length > 1) return;
+            
+            this.isDrawing = true;
+            const coords = this.getCanvasCoordinates(e);
+            this.lastX = this.startX = coords.x;
+            this.lastY = this.startY = coords.y;
+            
+            this.canvasState.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+        }
+        
+        draw(e) {
+            if (!this.isDrawing) return;
+            e.preventDefault();
+            
+            const coords = this.getCanvasCoordinates(e);
+            const currentX = coords.x;
+            const currentY = coords.y;
+            
+            this.ctx.beginPath();
+            this.ctx.lineWidth = this.currentSize;
+            this.ctx.lineCap = 'round';
+            this.ctx.strokeStyle = this.currentTool === 'eraser' ? 'white' : this.currentColor;
+            this.ctx.fillStyle = this.currentColor;
+            
+            switch(this.currentTool) {
+                case 'pencil':
+                    this.ctx.moveTo(this.lastX, this.lastY);
+                    this.ctx.lineTo(currentX, currentY);
+                    this.ctx.stroke();
+                    [this.lastX, this.lastY] = [currentX, currentY];
+                    break;
+                    
+                case 'eraser':
+                    this.ctx.moveTo(this.lastX, this.lastY);
+                    this.ctx.lineTo(currentX, currentY);
+                    this.ctx.stroke();
+                    [this.lastX, this.lastY] = [currentX, currentY];
+                    break;
+                    
+                case 'line':
+                    this.ctx.putImageData(this.canvasState[this.canvasState.length - 1], 0, 0);
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.startX, this.startY);
+                    this.ctx.lineTo(currentX, currentY);
+                    this.ctx.stroke();
+                    break;
+                    
+                case 'circle':
+                    this.ctx.putImageData(this.canvasState[this.canvasState.length - 1], 0, 0);
+                    const radius = Math.sqrt(
+                        Math.pow(currentX - this.startX, 2) +
+                        Math.pow(currentY - this.startY, 2)
+                    );
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.startX, this.startY, radius, 0, Math.PI * 2);
+                    this.ctx.stroke();
+                    break;
+                    
+                case 'rectangle':
+                    this.ctx.putImageData(this.canvasState[this.canvasState.length - 1], 0, 0);
+                    const width = currentX - this.startX;
+                    const height = currentY - this.startY;
+                    this.ctx.beginPath();
+                    this.ctx.rect(this.startX, this.startY, width, height);
+                    this.ctx.stroke();
+                    break;
+            }
+        }
+        
+        stopDrawing(e) {
+            e.preventDefault();
+            if (this.isDrawing) {
+                this.isDrawing = false;
+                this.showXPIndicator();
+            }
+        }
+        
+        getCanvasCoordinates(e) {
+            const rect = this.canvas.getBoundingClientRect();
+            if (e.touches) {
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                };
+            }
             return {
-                x: e.touches[0].clientX - rect.left,
-                y: e.touches[0].clientY - rect.top
+                x: e.offsetX,
+                y: e.offsetY
             };
         }
-        return {
-            x: e.offsetX,
-            y: e.offsetY
-        };
-    }
-
-    function resizeCanvas() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = Math.min(canvas.offsetWidth * 0.6, 600);
         
-        if (canvasState.length > 0) {
-            ctx.putImageData(canvasState[canvasState.length - 1], 0, 0);
-        }
-    }
-
-    function setTool(tool) {
-        currentTool = tool;
-        document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`${tool}-btn`).classList.add('active');
-    }
-
-    function startDrawing(e) {
-        e.preventDefault();
-        if (e.touches && e.touches.length > 1) return; // Ignore multi-touch
-        
-        isDrawing = true;
-        const coords = getCanvasCoordinates(e);
-        lastX = startX = coords.x;
-        lastY = startY = coords.y;
-        
-        if (e.touches) {
-            touchIdentifier = e.touches[0].identifier;
-        }
-        
-        canvasState.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    }
-
-    function draw(e) {
-        if (!isDrawing) return;
-        e.preventDefault();
-        
-        // Handle touch identifier mismatch
-        if (e.touches && touchIdentifier !== null) {
-            const touch = Array.from(e.touches).find(t => t.identifier === touchIdentifier);
-            if (!touch) return;
-            e = { touches: [touch] };
-        }
-
-        const coords = getCanvasCoordinates(e);
-        const currentX = coords.x;
-        const currentY = coords.y;
-        
-        ctx.beginPath();
-        ctx.lineWidth = lineWidthPicker.value;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = currentTool === 'eraser' ? 'white' : colorPicker.value;
-
-        switch(currentTool) {
-            case 'pencil':
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(currentX, currentY);
-                ctx.stroke();
-                [lastX, lastY] = [currentX, currentY];
-                break;
+        showXPIndicator() {
+            const indicator = document.querySelector('.xp-indicator');
+            indicator.style.display = 'block';
+            indicator.style.animation = 'fadeIn 0.5s';
             
-            case 'line':
-                ctx.putImageData(canvasState[canvasState.length - 1], 0, 0);
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(currentX, currentY);
-                ctx.stroke();
-                break;
+            setTimeout(() => {
+                indicator.style.animation = 'fadeOut 0.5s';
+                setTimeout(() => indicator.style.display = 'none', 500);
+            }, 2000);
+        }
+        
+        showSuccess(message) {
+            const notification = document.createElement('div');
+            notification.className = 'success-notification';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle"></i> ${message}
+            `;
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.background = '#4CAF50';
+            notification.style.color = 'white';
+            notification.style.padding = '15px 25px';
+            notification.style.borderRadius = '8px';
+            notification.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            notification.style.zIndex = '1000';
+            notification.style.animation = 'slideIn 0.5s forwards';
             
-            case 'circle':
-                ctx.putImageData(canvasState[canvasState.length - 1], 0, 0);
-                const radius = Math.sqrt(
-                    Math.pow(currentX - startX, 2) + 
-                    Math.pow(currentY - startY, 2)
-                );
-                ctx.beginPath();
-                ctx.arc(startX, startY, radius, 0, Math.PI * 2);
-                ctx.stroke();
-                break;
+            document.body.appendChild(notification);
             
-            case 'rectangle':
-                ctx.putImageData(canvasState[canvasState.length - 1], 0, 0);
-                const width = currentX - startX;
-                const height = currentY - startY;
-                ctx.beginPath();
-                ctx.rect(startX, startY, width, height);
-                ctx.stroke();
-                break;
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.5s forwards';
+                setTimeout(() => document.body.removeChild(notification), 500);
+            }, 3000);
+        }
+        
+        renderStats() {
+            document.getElementById('drawings-created').textContent = this.stats.drawings;
+            document.getElementById('tools-used').textContent = this.stats.toolsUsed;
+            document.getElementById('creative-streak').textContent = this.stats.streak;
+        }
+        
+        saveStats() {
+            localStorage.setItem('whiteboardStats', JSON.stringify(this.stats));
+        }
+        
+        initEventListeners() {
+            // Tool buttons
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.addEventListener('click', () => this.setTool(btn.dataset.tool));
+            });
             
-            case 'eraser':
-                ctx.lineWidth = lineWidthPicker.value * 2;
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(currentX, currentY);
-                ctx.stroke();
-                [lastX, lastY] = [currentX, currentY];
-                break;
+            // Color picker
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', () => this.setColor(option.dataset.color));
+            });
+            
+            // Size picker
+            document.querySelectorAll('.size-option').forEach(option => {
+                option.addEventListener('click', () => this.setSize(option.dataset.size));
+            });
+            
+            // Action buttons
+            document.getElementById('clear-btn').addEventListener('click', () => this.clearCanvas());
+            document.getElementById('save-btn').addEventListener('click', () => this.saveDrawing());
+            document.getElementById('image-upload').addEventListener('change', (e) => this.importImage(e));
+            
+            // Canvas events
+            this.canvas.addEventListener('mousedown', (e) => this.startDrawing(e));
+            this.canvas.addEventListener('mousemove', (e) => this.draw(e));
+            this.canvas.addEventListener('mouseup', (e) => this.stopDrawing(e));
+            this.canvas.addEventListener('mouseout', (e) => this.stopDrawing(e));
+            
+            // Touch events
+            this.canvas.addEventListener('touchstart', (e) => this.startDrawing(e));
+            this.canvas.addEventListener('touchmove', (e) => this.draw(e));
+            this.canvas.addEventListener('touchend', (e) => this.stopDrawing(e));
+            
+            // Window resize
+            window.addEventListener('resize', () => this.resizeCanvas());
         }
     }
 
-    function stopDrawing(e) {
-        e.preventDefault();
-        if (isDrawing) {
-            isDrawing = false;
-            touchIdentifier = null;
-            canvasState.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-        }
-    }
-
-    function clearCanvas() {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        canvasState = [ctx.getImageData(0, 0, canvas.width, canvas.height)];
-    }
-
-    function saveDrawing() {
-        const dataURL = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.download = 'digital_canvas_drawing.png';
-        link.href = dataURL;
-        link.click();
-    }
-
-    function importImage(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const scale = Math.min(
-                    canvas.width / img.width, 
-                    canvas.height / img.height
-                );
-                const scaledWidth = img.width * scale;
-                const scaledHeight = img.height * scale;
-                const x = (canvas.width - scaledWidth) / 2;
-                const y = (canvas.height - scaledHeight) / 2;
-
-                ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
-                canvasState.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-            };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-
-    // Event Listeners
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseout', stopDrawing);
-    
-    // Touch event listeners
-    canvas.addEventListener('touchstart', startDrawing);
-    canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stopDrawing);
-    canvas.addEventListener('touchcancel', stopDrawing);
-
-    imageUpload.addEventListener('change', importImage);
-
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('orientationchange', resizeCanvas); // For mobile rotation
-
-    resizeCanvas();
-    clearCanvas();
+    // Initialize the game when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        const whiteboardGame = new WhiteboardGame();
+    });
 </script>
 {% endblock %}
