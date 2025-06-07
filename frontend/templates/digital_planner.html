@@ -19,13 +19,11 @@
         background: white;
         border-radius: 15px;
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        position: relative;
     }
 
     .planner-header {
         text-align: center;
         margin-bottom: 30px;
-        position: relative;
     }
 
     .planner-header h2 {
@@ -45,7 +43,7 @@
     .xp-progress {
         height: 100%;
         background: linear-gradient(to right, var(--theme-color), #FF8E8E);
-        width: 30%;
+        width: 0%;
         border-radius: 5px;
         transition: width 0.5s ease;
     }
@@ -83,7 +81,7 @@
         margin-bottom: 15px;
     }
 
-    input, textarea {
+    input, textarea, select {
         flex: 1;
         padding: 12px 15px;
         border: 2px solid #eee;
@@ -92,7 +90,7 @@
         transition: all 0.3s;
     }
 
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
         border-color: var(--theme-color);
         outline: none;
     }
@@ -114,10 +112,6 @@
     .btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
-    }
-
-    .btn:active {
-        transform: translateY(0);
     }
 
     .btn i {
@@ -156,85 +150,63 @@
         gap: 10px;
     }
 
-    .complete-btn, .delete-btn {
+    .action-btn {
         padding: 5px 10px;
         border-radius: 5px;
         cursor: pointer;
         transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .complete-btn {
+    .positive-btn {
         background: var(--accent-color);
         color: white;
         border: none;
     }
 
-    .complete-btn:hover {
+    .positive-btn:hover {
         background: #3BBBB3;
     }
 
-    .delete-btn {
+    .negative-btn {
         background: #FF5252;
         color: white;
         border: none;
     }
 
-    .delete-btn:hover {
+    .negative-btn:hover {
         background: #E53935;
+    }
+
+    .delete-btn {
+        background: #f0f0f0;
+        color: var(--light-text);
+        border: none;
+    }
+
+    .delete-btn:hover {
+        background: #e0e0e0;
     }
 
     .completed {
         opacity: 0.7;
-        text-decoration: line-through;
         background: #f9f9f9;
     }
 
-    .achievement-badge {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: gold;
-        color: #333;
-        padding: 5px 10px;
-        border-radius: 20px;
+    .habit-positive {
+        border-left: 5px solid var(--accent-color);
+    }
+
+    .habit-negative {
+        border-left: 5px solid #FF5252;
+    }
+
+    .habit-streak {
         font-size: 0.8rem;
-        font-weight: bold;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-
-    .stats {
-        display: flex;
-        justify-content: space-around;
-        margin: 20px 0;
-        text-align: center;
-    }
-
-    .stat-box {
-        background: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        flex: 1;
-        margin: 0 10px;
-    }
-
-    .stat-value {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: var(--theme-color);
-        margin: 5px 0;
-    }
-
-    .stat-label {
-        font-size: 0.9rem;
         color: var(--light-text);
+        margin-top: 5px;
     }
 
     @media (max-width: 768px) {
@@ -245,14 +217,6 @@
         .input-group {
             flex-direction: column;
         }
-        
-        .stats {
-            flex-direction: column;
-        }
-        
-        .stat-box {
-            margin: 10px 0;
-        }
     }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -260,35 +224,16 @@
 
 {% block content %}
 <div class="planner-container">
-    <div class="achievement-badge">
-        <i class="fas fa-trophy"></i> Productivity Master
-    </div>
-    
     <div class="planner-header">
         <h2><i class="fas fa-calendar-alt"></i> Digital Planner</h2>
-        <p>Organize your day and earn XP for completing tasks!</p>
+        <p>Organize your day and track your progress</p>
         
         <div class="xp-bar">
-            <div class="xp-progress" id="xp-bar"></div>
+            <div class="xp-progress" id="xp-progress"></div>
         </div>
         <div class="xp-info">
-            <span>Level 3</span>
-            <span>450/1000 XP</span>
-        </div>
-    </div>
-    
-    <div class="stats">
-        <div class="stat-box">
-            <div class="stat-value" id="tasks-completed">12</div>
-            <div class="stat-label">Tasks Completed</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-value" id="streak-days">5</div>
-            <div class="stat-label">Day Streak</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-value" id="habits-tracked">8</div>
-            <div class="stat-label">Habits Tracked</div>
+            <span id="current-level">Level 1</span>
+            <span id="xp-count">0/1000 XP</span>
         </div>
     </div>
     
@@ -317,7 +262,11 @@
     <div class="planner-section">
         <h3><i class="fas fa-chart-line section-icon"></i> Habit Tracker</h3>
         <div class="input-group">
-            <input type="text" id="habitInput" placeholder="Track a habit...">
+            <select id="habitType">
+                <option value="positive">Create new habit</option>
+                <option value="negative">Break old habit</option>
+            </select>
+            <input type="text" id="habitInput" placeholder="Describe your habit...">
             <button class="btn" onclick="addHabit()"><i class="fas fa-plus"></i> Add Habit</button>
         </div>
         <ul class="item-list" id="habitList"></ul>
@@ -333,28 +282,16 @@
 </div>
 
 <script>
-    // XP System
-    let xp = 450;
-    let level = 3;
-    let tasksCompleted = 12;
-    let streakDays = 5;
-    let habitsTracked = 8;
-    
-    function updateXP(points) {
-        xp += points;
-        if (xp >= 1000) {
-            level++;
-            xp = xp - 1000;
-            showLevelUp();
-        }
-        document.getElementById('xp-bar').style.width = `${(xp/1000)*100}%`;
-        document.querySelector('.xp-info').innerHTML = `<span>Level ${level}</span><span>${xp}/1000 XP</span>`;
-    }
-    
-    function showLevelUp() {
-        alert(`🎉 Level Up! You've reached level ${level}!`);
-    }
-    
+    // Load user progress
+    let userProgress = JSON.parse(localStorage.getItem('userProgress')) || {
+        xp: 0,
+        level: 1,
+        maxXp: 1000
+    };
+
+    // Initialize UI
+    updateProgressUI();
+
     // Task Manager
     function addTask() {
         let taskInput = document.getElementById("taskInput");
@@ -365,7 +302,7 @@
         li.innerHTML = `
             <div class="item-content">${taskInput.value}</div>
             <div class="item-actions">
-                <button class="complete-btn" onclick="completeTask(this)"><i class="fas fa-check"></i></button>
+                <button class="positive-btn" onclick="completeTask(this)"><i class="fas fa-check"></i></button>
                 <button class="delete-btn" onclick="this.parentElement.parentElement.remove()"><i class="fas fa-trash"></i></button>
             </div>
         `;
@@ -375,12 +312,8 @@
     
     function completeTask(btn) {
         const item = btn.parentElement.parentElement;
-        item.classList.toggle('completed');
-        if (item.classList.contains('completed')) {
-            updateXP(25);
-            tasksCompleted++;
-            document.getElementById('tasks-completed').textContent = tasksCompleted;
-        }
+        item.classList.add('completed');
+        addXP(10); // 10 XP for completing a task
     }
     
     // Daily Planner
@@ -404,29 +337,45 @@
     // Habit Tracker
     function addHabit() {
         let habitInput = document.getElementById("habitInput");
+        let habitType = document.getElementById("habitType").value;
+        
         if (habitInput.value.trim() === "") return;
         
         let li = document.createElement("li");
-        li.className = "item";
+        li.className = `item ${habitType === 'positive' ? 'habit-positive' : 'habit-negative'}`;
         li.innerHTML = `
-            <div class="item-content">${habitInput.value}</div>
+            <div class="item-content">
+                ${habitInput.value}
+                <div class="habit-streak">Streak: 0 days</div>
+            </div>
             <div class="item-actions">
-                <button class="complete-btn" onclick="trackHabit(this)"><i class="fas fa-check"></i></button>
-                <button class="delete-btn" onclick="this.parentElement.parentElement.remove()"><i class="fas fa-trash"></i></button>
+                <button class="${habitType === 'positive' ? 'positive-btn' : 'negative-btn'}" 
+                    onclick="trackHabit(this, '${habitType}')">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="delete-btn" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
         `;
         document.getElementById("habitList").appendChild(li);
         habitInput.value = "";
-        habitsTracked++;
-        document.getElementById('habits-tracked').textContent = habitsTracked;
     }
     
-    function trackHabit(btn) {
+    function trackHabit(btn, type) {
         const item = btn.parentElement.parentElement;
-        item.classList.toggle('completed');
-        if (item.classList.contains('completed')) {
-            updateXP(10);
+        const streakElement = item.querySelector('.habit-streak');
+        let currentStreak = parseInt(streakElement.textContent.replace('Streak: ', '').replace(' days', '')) || 0;
+        
+        if (type === 'positive') {
+            currentStreak++;
+            addXP(5); // 5 XP for positive habit tracking
+        } else {
+            currentStreak = Math.max(0, currentStreak - 1);
+            addXP(-3); // Lose 3 XP for negative habit tracking
         }
+        
+        streakElement.textContent = `Streak: ${currentStreak} days`;
     }
     
     // Notes Section
@@ -435,7 +384,37 @@
         if (noteText.trim() === "") return;
         document.getElementById("savedNote").innerHTML = `<strong>Saved Note:</strong><br>${noteText}`;
         document.getElementById("noteInput").value = "";
-        updateXP(5);
+        addXP(2); // 2 XP for saving a note
+    }
+    
+    // XP System
+    function addXP(amount) {
+        userProgress.xp = Math.max(0, userProgress.xp + amount);
+        
+        // Check for level up
+        if (userProgress.xp >= userProgress.maxXp) {
+            userProgress.level++;
+            userProgress.xp = userProgress.xp - userProgress.maxXp;
+            userProgress.maxXp = Math.floor(userProgress.maxXp * 1.2); // Increase XP needed for next level
+            
+            // Show level up notification
+            alert(`🎉 Level Up! You've reached level ${userProgress.level}!`);
+        }
+        
+        localStorage.setItem('userProgress', JSON.stringify(userProgress));
+        updateProgressUI();
+    }
+    
+    function updateProgressUI() {
+        const xpProgress = document.getElementById('xp-progress');
+        const currentLevel = document.getElementById('current-level');
+        const xpCount = document.getElementById('xp-count');
+        
+        const percentage = (userProgress.xp / userProgress.maxXp) * 100;
+        
+        xpProgress.style.width = `${percentage}%`;
+        currentLevel.textContent = `Level ${userProgress.level}`;
+        xpCount.textContent = `${userProgress.xp}/${userProgress.maxXp} XP`;
     }
 </script>
 {% endblock %}

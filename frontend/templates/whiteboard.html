@@ -32,33 +32,6 @@
         margin-bottom: 15px;
     }
 
-    .stats-container {
-        display: flex;
-        justify-content: space-around;
-        margin: 20px 0;
-        text-align: center;
-    }
-
-    .stat-box {
-        background: var(--theme-light);
-        padding: 15px;
-        border-radius: 10px;
-        flex: 1;
-        margin: 0 10px;
-    }
-
-    .stat-value {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: var(--theme-color);
-        margin: 5px 0;
-    }
-
-    .stat-label {
-        font-size: 0.9rem;
-        color: var(--light-text);
-    }
-
     .controls {
         background: var(--theme-light);
         padding: 20px;
@@ -101,29 +74,26 @@
         box-shadow: 0 5px 15px rgba(255, 107, 107, 0.2);
     }
 
-    .color-picker {
+    .color-picker-container {
         display: flex;
         align-items: center;
         gap: 10px;
         margin: 15px 0;
     }
 
-    .color-option {
+    .color-preview {
         width: 30px;
         height: 30px;
         border-radius: 50%;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition: all 0.2s;
+        background: var(--current-color, #000000);
+        border: 2px solid var(--dark-text);
     }
 
-    .color-option:hover {
-        transform: scale(1.1);
-    }
-
-    .color-option.selected {
-        border-color: var(--dark-text);
-        transform: scale(1.1);
+    .color-input {
+        width: 100px;
+        padding: 5px;
+        border: 2px solid #eee;
+        border-radius: 8px;
     }
 
     .brush-size {
@@ -133,22 +103,12 @@
         margin: 15px 0;
     }
 
-    .size-option {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: var(--theme-color);
-        cursor: pointer;
-        transition: all 0.2s;
+    .size-label {
+        min-width: 50px;
     }
 
-    .size-option:hover {
-        transform: scale(1.2);
-    }
-
-    .size-option.selected {
-        transform: scale(1.2);
-        background: var(--dark-text);
+    .size-slider {
+        flex: 1;
     }
 
     .action-buttons {
@@ -195,39 +155,6 @@
         touch-action: none;
     }
 
-    .achievement-badge {
-        position: absolute;
-        top: -15px;
-        right: -15px;
-        background: gold;
-        color: #333;
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: bold;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        animation: pulse 2s infinite;
-        z-index: 10;
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-
-    .xp-indicator {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        background: rgba(0,0,0,0.7);
-        color: white;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        z-index: 10;
-    }
-
     @media (max-width: 768px) {
         .whiteboard-game {
             padding: 20px;
@@ -235,14 +162,6 @@
         
         .toolbar {
             justify-content: center;
-        }
-        
-        .stats-container {
-            flex-direction: column;
-        }
-        
-        .stat-box {
-            margin: 10px 0;
         }
         
         #canvas {
@@ -257,22 +176,7 @@
 <div class="whiteboard-game">
     <div class="game-header">
         <h2><i class="fas fa-paint-brush"></i> Creative Canvas</h2>
-        <p>Express your ideas and earn XP for your creativity!</p>
-    </div>
-    
-    <div class="stats-container">
-        <div class="stat-box">
-            <div class="stat-value" id="drawings-created">0</div>
-            <div class="stat-label">Drawings Created</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-value" id="tools-used">0</div>
-            <div class="stat-label">Tools Used</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-value" id="creative-streak">0</div>
-            <div class="stat-label">Day Streak</div>
-        </div>
+        <p>Express your ideas freely!</p>
     </div>
     
     <div class="controls">
@@ -294,24 +198,16 @@
             </button>
         </div>
         
-        <div class="color-picker">
-            <span>Colors:</span>
-            <div class="color-option selected" style="background: #FF6B6B;" data-color="#FF6B6B"></div>
-            <div class="color-option" style="background: #4ECDC4;" data-color="#4ECDC4"></div>
-            <div class="color-option" style="background: #FFD166;" data-color="#FFD166"></div>
-            <div class="color-option" style="background: #06D6A0;" data-color="#06D6A0"></div>
-            <div class="color-option" style="background: #118AB2;" data-color="#118AB2"></div>
-            <div class="color-option" style="background: #073B4C;" data-color="#073B4C"></div>
-            <div class="color-option" style="background: #000000;" data-color="#000000"></div>
+        <div class="color-picker-container">
+            <div class="color-preview" id="color-preview"></div>
+            <input type="color" id="color-input" class="color-input" value="#000000">
+            <span id="color-value">#000000</span>
         </div>
         
         <div class="brush-size">
-            <span>Size:</span>
-            <div class="size-option selected" data-size="2"></div>
-            <div class="size-option" data-size="5"></div>
-            <div class="size-option" data-size="10"></div>
-            <div class="size-option" data-size="15"></div>
-            <div class="size-option" data-size="20"></div>
+            <span class="size-label">Size:</span>
+            <input type="range" id="size-slider" class="size-slider" min="1" max="50" value="5">
+            <span id="size-value">5px</span>
         </div>
         
         <div class="action-buttons">
@@ -321,33 +217,23 @@
             <button class="action-btn" id="save-btn">
                 <i class="fas fa-save"></i> Save
             </button>
-            <label for="image-upload" class="action-btn">
-                <i class="fas fa-image"></i> Import
-                <input type="file" id="image-upload" accept="image/*" style="display: none;">
-            </label>
         </div>
     </div>
     
     <div class="canvas-container">
-        <div class="achievement-badge">
-            <i class="fas fa-trophy"></i> Creative Genius
-        </div>
         <canvas id="canvas"></canvas>
-        <div class="xp-indicator">
-            <i class="fas fa-star"></i> +5 XP for drawing
-        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    class WhiteboardGame {
+    class Whiteboard {
         constructor() {
             this.canvas = document.getElementById('canvas');
             this.ctx = this.canvas.getContext('2d');
             this.currentTool = 'pencil';
-            this.currentColor = '#FF6B6B';
+            this.currentColor = '#000000';
             this.currentSize = 5;
             this.isDrawing = false;
             this.lastX = 0;
@@ -355,38 +241,9 @@
             this.startX = 0;
             this.startY = 0;
             this.canvasState = [];
-            this.stats = JSON.parse(localStorage.getItem('whiteboardStats')) || {
-                drawings: 0,
-                toolsUsed: 0,
-                streak: 0,
-                lastUsed: null
-            };
             
             this.initCanvas();
             this.initEventListeners();
-            this.checkUsageStreak();
-            this.renderStats();
-        }
-        
-        checkUsageStreak() {
-            const today = new Date().toDateString();
-            const lastDate = this.stats.lastUsed ? new Date(this.stats.lastUsed).toDateString() : null;
-            
-            if (lastDate === today) return;
-            
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = yesterday.toDateString();
-            
-            if (lastDate === yesterdayStr) {
-                this.stats.streak++;
-            } else if (lastDate !== today) {
-                this.stats.streak = 0;
-            }
-            
-            this.stats.lastUsed = new Date();
-            this.saveStats();
-            this.renderStats();
         }
         
         initCanvas() {
@@ -395,8 +252,9 @@
         }
         
         resizeCanvas() {
-            this.canvas.width = this.canvas.offsetWidth;
-            this.canvas.height = this.canvas.offsetWidth * 0.7;
+            const rect = this.canvas.getBoundingClientRect();
+            this.canvas.width = rect.width;
+            this.canvas.height = rect.height;
             
             if (this.canvasState.length > 0) {
                 this.ctx.putImageData(this.canvasState[this.canvasState.length - 1], 0, 0);
@@ -407,9 +265,6 @@
             this.ctx.fillStyle = 'white';
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             this.canvasState = [this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)];
-            this.stats.drawings++;
-            this.saveStats();
-            this.renderStats();
         }
         
         saveDrawing() {
@@ -418,35 +273,6 @@
             link.download = 'creative_canvas.png';
             link.href = dataURL;
             link.click();
-            
-            this.showSuccess('Drawing saved! +10 XP');
-        }
-        
-        importImage(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
-                    const scale = Math.min(
-                        this.canvas.width / img.width,
-                        this.canvas.height / img.height
-                    );
-                    const width = img.width * scale;
-                    const height = img.height * scale;
-                    const x = (this.canvas.width - width) / 2;
-                    const y = (this.canvas.height - height) / 2;
-                    
-                    this.ctx.drawImage(img, x, y, width, height);
-                    this.canvasState.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
-                    
-                    this.showSuccess('Image imported! +5 XP');
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
         }
         
         setTool(tool) {
@@ -454,24 +280,17 @@
             document.querySelectorAll('.tool-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.tool === tool);
             });
-            
-            this.stats.toolsUsed++;
-            this.saveStats();
-            this.renderStats();
         }
         
         setColor(color) {
             this.currentColor = color;
-            document.querySelectorAll('.color-option').forEach(option => {
-                option.classList.toggle('selected', option.dataset.color === color);
-            });
+            document.getElementById('color-preview').style.backgroundColor = color;
+            document.getElementById('color-value').textContent = color;
         }
         
         setSize(size) {
-            this.currentSize = parseInt(size);
-            document.querySelectorAll('.size-option').forEach(option => {
-                option.classList.toggle('selected', parseInt(option.dataset.size) === this.currentSize);
-            });
+            this.currentSize = size;
+            document.getElementById('size-value').textContent = `${size}px`;
         }
         
         startDrawing(e) {
@@ -549,68 +368,27 @@
             e.preventDefault();
             if (this.isDrawing) {
                 this.isDrawing = false;
-                this.showXPIndicator();
+                this.canvasState.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
             }
         }
         
         getCanvasCoordinates(e) {
             const rect = this.canvas.getBoundingClientRect();
+            let x, y;
+            
             if (e.touches) {
-                return {
-                    x: e.touches[0].clientX - rect.left,
-                    y: e.touches[0].clientY - rect.top
-                };
+                x = e.touches[0].clientX - rect.left;
+                y = e.touches[0].clientY - rect.top;
+            } else {
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
             }
-            return {
-                x: e.offsetX,
-                y: e.offsetY
-            };
-        }
-        
-        showXPIndicator() {
-            const indicator = document.querySelector('.xp-indicator');
-            indicator.style.display = 'block';
-            indicator.style.animation = 'fadeIn 0.5s';
             
-            setTimeout(() => {
-                indicator.style.animation = 'fadeOut 0.5s';
-                setTimeout(() => indicator.style.display = 'none', 500);
-            }, 2000);
-        }
-        
-        showSuccess(message) {
-            const notification = document.createElement('div');
-            notification.className = 'success-notification';
-            notification.innerHTML = `
-                <i class="fas fa-check-circle"></i> ${message}
-            `;
-            notification.style.position = 'fixed';
-            notification.style.bottom = '20px';
-            notification.style.right = '20px';
-            notification.style.background = '#4CAF50';
-            notification.style.color = 'white';
-            notification.style.padding = '15px 25px';
-            notification.style.borderRadius = '8px';
-            notification.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
-            notification.style.zIndex = '1000';
-            notification.style.animation = 'slideIn 0.5s forwards';
+            // Adjust for canvas scaling
+            x = x * (this.canvas.width / rect.width);
+            y = y * (this.canvas.height / rect.height);
             
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.5s forwards';
-                setTimeout(() => document.body.removeChild(notification), 500);
-            }, 3000);
-        }
-        
-        renderStats() {
-            document.getElementById('drawings-created').textContent = this.stats.drawings;
-            document.getElementById('tools-used').textContent = this.stats.toolsUsed;
-            document.getElementById('creative-streak').textContent = this.stats.streak;
-        }
-        
-        saveStats() {
-            localStorage.setItem('whiteboardStats', JSON.stringify(this.stats));
+            return { x, y };
         }
         
         initEventListeners() {
@@ -620,19 +398,18 @@
             });
             
             // Color picker
-            document.querySelectorAll('.color-option').forEach(option => {
-                option.addEventListener('click', () => this.setColor(option.dataset.color));
+            document.getElementById('color-input').addEventListener('input', (e) => {
+                this.setColor(e.target.value);
             });
             
-            // Size picker
-            document.querySelectorAll('.size-option').forEach(option => {
-                option.addEventListener('click', () => this.setSize(option.dataset.size));
+            // Size slider
+            document.getElementById('size-slider').addEventListener('input', (e) => {
+                this.setSize(parseInt(e.target.value));
             });
             
             // Action buttons
             document.getElementById('clear-btn').addEventListener('click', () => this.clearCanvas());
             document.getElementById('save-btn').addEventListener('click', () => this.saveDrawing());
-            document.getElementById('image-upload').addEventListener('change', (e) => this.importImage(e));
             
             // Canvas events
             this.canvas.addEventListener('mousedown', (e) => this.startDrawing(e));
@@ -650,9 +427,9 @@
         }
     }
 
-    // Initialize the game when DOM is loaded
+    // Initialize the whiteboard when DOM is loaded
     document.addEventListener('DOMContentLoaded', () => {
-        const whiteboardGame = new WhiteboardGame();
+        const whiteboard = new Whiteboard();
     });
 </script>
 {% endblock %}

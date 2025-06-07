@@ -76,7 +76,7 @@
     .xp-progress {
         height: 100%;
         background: linear-gradient(to right, var(--theme-color), #FF8E8E);
-        width: 45%;
+        width: 0%;
         border-radius: 5px;
         transition: width 0.5s ease;
     }
@@ -87,28 +87,6 @@
         font-size: 0.8rem;
         color: var(--light-text);
         margin-top: 5px;
-    }
-
-    .achievements {
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-    }
-
-    .achievement-badge {
-        background: gold;
-        color: #333;
-        padding: 3px 8px;
-        border-radius: 15px;
-        font-size: 0.7rem;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .achievement-badge i {
-        font-size: 0.8rem;
     }
 
     .features-header {
@@ -143,6 +121,7 @@
         border: 2px solid var(--theme-light);
         position: relative;
         overflow: hidden;
+        cursor: pointer;
     }
 
     .feature-card:hover {
@@ -169,22 +148,6 @@
         font-size: 0.95rem;
     }
 
-    .feature-btn {
-        display: inline-block;
-        padding: 10px 20px;
-        background: var(--theme-color);
-        color: white;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-
-    .feature-btn:hover {
-        background: #E55F5F;
-        transform: translateY(-2px);
-    }
-
     .feature-badge {
         position: absolute;
         top: 15px;
@@ -195,41 +158,6 @@
         border-radius: 15px;
         font-size: 0.7rem;
         font-weight: bold;
-    }
-
-    .daily-challenge {
-        margin-top: 40px;
-        background: linear-gradient(135deg, var(--theme-color), #FF8E8E);
-        padding: 25px;
-        border-radius: 12px;
-        color: white;
-        text-align: center;
-    }
-
-    .challenge-title {
-        font-size: 1.5rem;
-        margin: 0 0 15px 0;
-    }
-
-    .challenge-desc {
-        margin: 0 0 20px 0;
-        font-size: 1rem;
-    }
-
-    .challenge-btn {
-        display: inline-block;
-        padding: 12px 25px;
-        background: white;
-        color: var(--theme-color);
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-
-    .challenge-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
     @media (max-width: 768px) {
@@ -262,33 +190,24 @@
             <i class="fas fa-user"></i>
         </div>
         <div class="user-info">
-            <h3 class="user-name">Welcome, Explorer!</h3>
-            <p class="user-level">Level 3 Productivity Master</p>
+            <h3 class="user-name">Welcome to Progrify!</h3>
+            <p class="user-level">Begin your productivity journey</p>
             
             <div class="xp-bar-container">
                 <div class="xp-bar">
-                    <div class="xp-progress" style="width: 45%;"></div>
+                    <div class="xp-progress" id="xp-progress-bar"></div>
                 </div>
                 <div class="xp-info">
-                    <span>450/1000 XP</span>
-                    <span>45% to next level</span>
-                </div>
-            </div>
-            
-            <div class="achievements">
-                <div class="achievement-badge">
-                    <i class="fas fa-trophy"></i> 5-Day Streak
-                </div>
-                <div class="achievement-badge">
-                    <i class="fas fa-star"></i> Quick Learner
+                    <span id="current-xp">0</span>/<span id="max-xp">1000</span> XP
+                    <span id="xp-percent">0%</span> to next level
                 </div>
             </div>
         </div>
     </div>
     
     <div class="features-header">
-        <h2><i class="fas fa-gamepad"></i> Your Productivity Toolkit</h2>
-        <p>Complete tasks and earn XP to level up your productivity skills!</p>
+        <h2><i class="fas fa-tools"></i> Your Productivity Toolkit</h2>
+        <p>Get started with these powerful tools to boost your productivity</p>
     </div>
     
     <div class="features-grid">
@@ -297,9 +216,8 @@
                 <i class="fas fa-calendar-alt"></i>
             </div>
             <h3 class="feature-title">Digital Planner</h3>
-            <p class="feature-desc">Organize your daily schedule and earn XP for completing tasks</p>
-            <a href="{{ url_for('digital_planner') }}" class="feature-btn">Start Planning</a>
-            <div class="feature-badge">+10 XP per task</div>
+            <p class="feature-desc">Organize your daily schedule and track your habits</p>
+            <div class="feature-badge">New</div>
         </div>
         
         <div class="feature-card" onclick="window.location.href='{{ url_for('pdf_tools') }}'">
@@ -308,8 +226,6 @@
             </div>
             <h3 class="feature-title">Document Intelligence</h3>
             <p class="feature-desc">Transform PDFs into actionable insights and summaries</p>
-            <a href="{{ url_for('pdf_tools') }}" class="feature-btn">Analyze Docs</a>
-            <div class="feature-badge">+25 XP per doc</div>
         </div>
         
         <div class="feature-card" onclick="window.location.href='{{ url_for('flashcards') }}'">
@@ -318,8 +234,6 @@
             </div>
             <h3 class="feature-title">Smart Flashcards</h3>
             <p class="feature-desc">Create and study flashcards to boost your memory</p>
-            <a href="{{ url_for('flashcards') }}" class="feature-btn">Start Learning</a>
-            <div class="feature-badge">+5 XP per card</div>
         </div>
         
         <div class="feature-card" onclick="window.location.href='{{ url_for('whiteboard') }}'">
@@ -328,15 +242,42 @@
             </div>
             <h3 class="feature-title">Creative Canvas</h3>
             <p class="feature-desc">Doodle, sketch ideas and express your creativity</p>
-            <a href="{{ url_for('whiteboard') }}" class="feature-btn">Start Drawing</a>
-            <div class="feature-badge">+15 XP per drawing</div>
         </div>
     </div>
-    
-    <div class="daily-challenge">
-        <h3 class="challenge-title"><i class="fas fa-medal"></i> Daily Challenge</h3>
-        <p class="challenge-desc">Complete 5 tasks today to earn a bonus 50 XP!</p>
-        <a href="{{ url_for('digital_planner') }}" class="challenge-btn">Accept Challenge</a>
-    </div>
 </div>
+
+<script>
+    // Initialize user progress
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user progress exists in localStorage
+        let userProgress = JSON.parse(localStorage.getItem('userProgress'));
+        
+        if (!userProgress) {
+            // Initialize new user
+            userProgress = {
+                xp: 0,
+                level: 1,
+                maxXp: 1000
+            };
+            localStorage.setItem('userProgress', JSON.stringify(userProgress));
+        }
+        
+        // Update UI
+        updateProgressUI(userProgress);
+    });
+
+    function updateProgressUI(progress) {
+        const xpBar = document.getElementById('xp-progress-bar');
+        const currentXp = document.getElementById('current-xp');
+        const maxXp = document.getElementById('max-xp');
+        const xpPercent = document.getElementById('xp-percent');
+        
+        const percentage = Math.min(100, (progress.xp / progress.maxXp) * 100);
+        
+        xpBar.style.width = `${percentage}%`;
+        currentXp.textContent = progress.xp;
+        maxXp.textContent = progress.maxXp;
+        xpPercent.textContent = `${Math.floor(percentage)}%`;
+    }
+</script>
 {% endblock %}
