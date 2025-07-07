@@ -4,6 +4,8 @@
 
 {% block additional_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 <style>
     :root {
         --theme-color: #FF6B6B;
@@ -31,6 +33,7 @@
         padding: 20px;
         background: var(--theme-light);
         border-radius: 12px;
+        flex-wrap: wrap;
     }
 
     .avatar {
@@ -49,6 +52,7 @@
 
     .user-info {
         flex: 1;
+        min-width: 200px;
     }
 
     .user-name {
@@ -87,6 +91,7 @@
         font-size: 0.8rem;
         color: var(--light-text);
         margin-top: 5px;
+        flex-wrap: wrap;
     }
 
     .features-header {
@@ -108,14 +113,14 @@
 
     .features-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: 1fr;
         gap: 25px;
     }
 
     .feature-card {
         background: white;
         border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         padding: 25px;
         transition: all 0.3s;
         border: 2px solid var(--theme-light);
@@ -160,27 +165,24 @@
         font-weight: bold;
     }
 
-    @media (max-width: 768px) {
-        .gamified-container {
-            padding: 20px;
-        }
-        
-        .user-profile {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .avatar {
-            margin-right: 0;
-            margin-bottom: 15px;
-        }
-        
+    /* Tablet: 2 columns */
+    @media (min-width: 768px) {
         .features-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .user-profile {
+            flex-wrap: nowrap;
+        }
+    }
+
+    /* Desktop: 4 columns */
+    @media (min-width: 1200px) {
+        .features-grid {
+            grid-template-columns: repeat(4, 1fr);
         }
     }
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}
 
 {% block content %}
@@ -192,24 +194,24 @@
         <div class="user-info">
             <h3 class="user-name">Welcome to Progrify!</h3>
             <p class="user-level">Begin your productivity journey</p>
-            
+
             <div class="xp-bar-container">
                 <div class="xp-bar">
                     <div class="xp-progress" id="xp-progress-bar"></div>
                 </div>
                 <div class="xp-info">
-                    <span id="current-xp">0</span>/<span id="max-xp">1000</span> XP
+                    <span><span id="current-xp">0</span> / <span id="max-xp">1000</span> XP</span>
                     <span id="xp-percent">0%</span> to next level
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="features-header">
         <h2><i class="fas fa-tools"></i> Your Productivity Toolkit</h2>
         <p>Get started with these powerful tools to boost your productivity</p>
     </div>
-    
+
     <div class="features-grid">
         <div class="feature-card" onclick="window.location.href='{{ url_for('digital_planner') }}'">
             <div class="feature-icon">
@@ -219,7 +221,7 @@
             <p class="feature-desc">Organize your daily schedule and track your habits</p>
             <div class="feature-badge">New</div>
         </div>
-        
+
         <div class="feature-card" onclick="window.location.href='{{ url_for('pdf_tools') }}'">
             <div class="feature-icon">
                 <i class="fas fa-file-pdf"></i>
@@ -227,7 +229,7 @@
             <h3 class="feature-title">Document Intelligence</h3>
             <p class="feature-desc">Transform PDFs into actionable insights and summaries</p>
         </div>
-        
+
         <div class="feature-card" onclick="window.location.href='{{ url_for('flashcards') }}'">
             <div class="feature-icon">
                 <i class="fas fa-brain"></i>
@@ -235,7 +237,7 @@
             <h3 class="feature-title">Smart Flashcards</h3>
             <p class="feature-desc">Create and study flashcards to boost your memory</p>
         </div>
-        
+
         <div class="feature-card" onclick="window.location.href='{{ url_for('whiteboard') }}'">
             <div class="feature-icon">
                 <i class="fas fa-paint-brush"></i>
@@ -247,13 +249,10 @@
 </div>
 
 <script>
-    // Initialize user progress
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check if user progress exists in localStorage
+    document.addEventListener('DOMContentLoaded', function () {
         let userProgress = JSON.parse(localStorage.getItem('userProgress'));
-        
+
         if (!userProgress) {
-            // Initialize new user
             userProgress = {
                 xp: 0,
                 level: 1,
@@ -261,8 +260,7 @@
             };
             localStorage.setItem('userProgress', JSON.stringify(userProgress));
         }
-        
-        // Update UI
+
         updateProgressUI(userProgress);
     });
 
@@ -271,9 +269,9 @@
         const currentXp = document.getElementById('current-xp');
         const maxXp = document.getElementById('max-xp');
         const xpPercent = document.getElementById('xp-percent');
-        
+
         const percentage = Math.min(100, (progress.xp / progress.maxXp) * 100);
-        
+
         xpBar.style.width = `${percentage}%`;
         currentXp.textContent = progress.xp;
         maxXp.textContent = progress.maxXp;
