@@ -3,9 +3,7 @@
 {% block title %}Progrify: Productivity Companion{% endblock %}
 
 {% block additional_styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
 <style>
     :root {
         --theme-color: #FF6B6B;
@@ -21,7 +19,7 @@
         padding: 30px;
         background: white;
         border-radius: 15px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
         position: relative;
         overflow: hidden;
     }
@@ -29,11 +27,14 @@
     .user-profile {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         margin-bottom: 30px;
         padding: 20px;
-        background: var(--theme-light);
+        background: #FFEDED;
         border-radius: 12px;
         flex-wrap: wrap;
+        gap: 20px;
+        position: relative;
     }
 
     .avatar {
@@ -46,7 +47,6 @@
         justify-content: center;
         color: white;
         font-size: 2rem;
-        margin-right: 20px;
         box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
     }
 
@@ -92,6 +92,50 @@
         color: var(--light-text);
         margin-top: 5px;
         flex-wrap: wrap;
+    }
+
+    .purchase-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    .purchase-button a {
+        display: inline-block;
+        background: linear-gradient(145deg, #FF6B6B, #FF9F9F);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.95rem;
+        box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .purchase-button a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -75%;
+        width: 50%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: skewX(-20deg);
+        animation: shine 4s infinite;
+    }
+
+    @keyframes shine {
+        0% { left: -75%; }
+        60% { left: 125%; }
+        100% { left: 125%; }
+    }
+
+    .purchase-button a:hover {
+        transform: scale(1.05);
+        background: linear-gradient(145deg, #FF4E4E, #FF8383);
+        box-shadow: 0 8px 20px rgba(255, 107, 107, 0.5);
     }
 
     .features-header {
@@ -165,18 +209,12 @@
         font-weight: bold;
     }
 
-    /* Tablet: 2 columns */
     @media (min-width: 768px) {
         .features-grid {
             grid-template-columns: repeat(2, 1fr);
         }
-
-        .user-profile {
-            flex-wrap: nowrap;
-        }
     }
 
-    /* Desktop: 4 columns */
     @media (min-width: 1200px) {
         .features-grid {
             grid-template-columns: repeat(4, 1fr);
@@ -201,9 +239,12 @@
                 </div>
                 <div class="xp-info">
                     <span><span id="current-xp">0</span> / <span id="max-xp">1000</span> XP</span>
-                    <span id="xp-percent">0%</span> to next level
+                    <span><span id="xp-percent">0%</span> to next level</span>
                 </div>
             </div>
+        </div>
+        <div class="purchase-button">
+            <a href="https://payhip.com/b/oAtdU" target="_blank">✨ Become the Owner</a>
         </div>
     </div>
 
@@ -214,34 +255,26 @@
 
     <div class="features-grid">
         <div class="feature-card" onclick="window.location.href='{{ url_for('digital_planner') }}'">
-            <div class="feature-icon">
-                <i class="fas fa-calendar-alt"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
             <h3 class="feature-title">Digital Planner</h3>
             <p class="feature-desc">Organize your daily schedule and track your habits</p>
             <div class="feature-badge">New</div>
         </div>
 
         <div class="feature-card" onclick="window.location.href='{{ url_for('pdf_tools') }}'">
-            <div class="feature-icon">
-                <i class="fas fa-file-pdf"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-file-pdf"></i></div>
             <h3 class="feature-title">Document Intelligence</h3>
             <p class="feature-desc">Transform PDFs into actionable insights and summaries</p>
         </div>
 
         <div class="feature-card" onclick="window.location.href='{{ url_for('flashcards') }}'">
-            <div class="feature-icon">
-                <i class="fas fa-brain"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-brain"></i></div>
             <h3 class="feature-title">Smart Flashcards</h3>
             <p class="feature-desc">Create and study flashcards to boost your memory</p>
         </div>
 
         <div class="feature-card" onclick="window.location.href='{{ url_for('whiteboard') }}'">
-            <div class="feature-icon">
-                <i class="fas fa-paint-brush"></i>
-            </div>
+            <div class="feature-icon"><i class="fas fa-paint-brush"></i></div>
             <h3 class="feature-title">Creative Canvas</h3>
             <p class="feature-desc">Doodle, sketch ideas and express your creativity</p>
         </div>
@@ -251,16 +284,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         let userProgress = JSON.parse(localStorage.getItem('userProgress'));
-
         if (!userProgress) {
-            userProgress = {
-                xp: 0,
-                level: 1,
-                maxXp: 1000
-            };
+            userProgress = { xp: 0, level: 1, maxXp: 1000 };
             localStorage.setItem('userProgress', JSON.stringify(userProgress));
         }
-
         updateProgressUI(userProgress);
     });
 
@@ -271,10 +298,9 @@
         const xpPercent = document.getElementById('xp-percent');
 
         const percentage = Math.min(100, (progress.xp / progress.maxXp) * 100);
-
         xpBar.style.width = `${percentage}%`;
-        currentXp.textContent = progress.xp;
-        maxXp.textContent = progress.maxXp;
+        currentXp.textContent = progress.xp.toLocaleString();
+        maxXp.textContent = progress.maxXp.toLocaleString();
         xpPercent.textContent = `${Math.floor(percentage)}%`;
     }
 </script>
