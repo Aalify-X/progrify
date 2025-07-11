@@ -3,23 +3,14 @@
 {% block title %}Progrify: Productivity Companion{% endblock %}
 
 {% block additional_styles %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-    :root {
-        --theme-color: #FF6B6B;
-        --theme-light: rgba(255, 107, 107, 0.1);
-        --accent-color: #4ECDC4;
-        --dark-text: #333333;
-        --light-text: #777777;
-    }
-
     .gamified-container {
         max-width: 1200px;
         margin: 30px auto;
         padding: 30px;
         background: white;
         border-radius: 15px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         position: relative;
         overflow: hidden;
     }
@@ -28,12 +19,11 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 30px;
-        padding: 20px;
-        background: #FFEDED;
-        border-radius: 12px;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 1rem;
+        background: var(--theme-light);
+        padding: 20px;
+        border-radius: 12px;
         position: relative;
     }
 
@@ -95,14 +85,12 @@
     }
 
     .purchase-button {
-        position: absolute;
-        top: 20px;
-        right: 20px;
+        position: relative;
     }
 
     .purchase-button a {
         display: inline-block;
-        background: linear-gradient(145deg, #FF6B6B, #FF9F9F);
+        background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
         color: white;
         padding: 12px 20px;
         border-radius: 10px;
@@ -112,24 +100,26 @@
         box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
         position: relative;
         overflow: hidden;
+        z-index: 1;
     }
 
     .purchase-button a::before {
         content: '';
         position: absolute;
         top: 0;
-        left: -75%;
-        width: 50%;
+        left: -150%;
+        width: 200%;
         height: 100%;
-        background: rgba(255, 255, 255, 0.3);
+        background: linear-gradient(120deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
         transform: skewX(-20deg);
-        animation: shine 4s infinite;
+        animation: shine-slide 3s linear infinite;
+        z-index: 2;
+        pointer-events: none;
     }
 
-    @keyframes shine {
-        0% { left: -75%; }
-        60% { left: 125%; }
-        100% { left: 125%; }
+    @keyframes shine-slide {
+        0% { left: -150%; }
+        100% { left: 150%; }
     }
 
     .purchase-button a:hover {
@@ -140,7 +130,7 @@
 
     .features-header {
         text-align: center;
-        margin-bottom: 30px;
+        margin: 40px 0 30px;
     }
 
     .features-header h2 {
@@ -159,6 +149,18 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 25px;
+    }
+
+    @media (min-width: 768px) {
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .features-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
     }
 
     .feature-card {
@@ -209,15 +211,10 @@
         font-weight: bold;
     }
 
-    @media (min-width: 768px) {
-        .features-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (min-width: 1200px) {
-        .features-grid {
-            grid-template-columns: repeat(4, 1fr);
+    @media (max-width: 600px) {
+        .purchase-button a {
+            padding: 10px 14px;
+            font-size: 0.8rem;
         }
     }
 </style>
@@ -243,6 +240,7 @@
                 </div>
             </div>
         </div>
+
         <div class="purchase-button">
             <a href="https://payhip.com/b/oAtdU" target="_blank">✨ Become the Owner</a>
         </div>
@@ -299,8 +297,8 @@
 
         const percentage = Math.min(100, (progress.xp / progress.maxXp) * 100);
         xpBar.style.width = `${percentage}%`;
-        currentXp.textContent = progress.xp.toLocaleString();
-        maxXp.textContent = progress.maxXp.toLocaleString();
+        currentXp.textContent = progress.xp;
+        maxXp.textContent = progress.maxXp;
         xpPercent.textContent = `${Math.floor(percentage)}%`;
     }
 </script>
