@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Planner | Progrify</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1A2238;
+            --primary-light: #2A3566;
+            --secondary: #FF6B6B;
+            --accent: #4ECDC4;
+            --gold: #D4AF37;
+            --dark: #1E293B;
+            --light: #F8FAFC;
+            --gray: #94A3B8;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --border: #E2E8F0;
+            --card-bg: #FFFFFF;
+            --border-radius: 16px;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .planner-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.8s ease;
+        }
+
+        .planner-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .planner-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--gold) 0%, #FFD700 100%);
+            border-radius: 2px;
+        }
+
+        .planner-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .planner-header p {
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: var(--shadow);
+            animation: slideDown 0.6s ease;
+        }
+
+        .progress-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-title h3 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .xp-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .xp-progress {
+            height: 100%;
+            background: linear-gradient(135deg, var(--gold) 0%, #FFD700 100%);
+            width: 0%;
+            border-radius: 10px;
+            transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .xp-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .xp-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 10px;
+        }
+
+        .planner-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--gold);
+            transition: var(--transition);
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+
+        .planner-section:nth-child(1) { animation-delay: 0.1s; }
+        .planner-section:nth-child(2) { animation-delay: 0.2s; }
+        .planner-section:nth-child(3) { animation-delay: 0.3s; }
+        .planner-section:nth-child(4) { animation-delay: 0.4s; }
+
+        .planner-section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(26, 34, 56, 0.2);
+        }
+
+        .section-header h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input, textarea, select {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+            background: var(--light);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 34, 56, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 5px 15px rgba(26, 34, 56, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(26, 34, 56, 0.3);
+        }
+
+        .item-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .item {
+            background: var(--light);
+            padding: 18px 20px;
+            margin: 12px 0;
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            animation: fadeInRight 0.5s ease;
+            animation-fill-mode: both;
+        }
+
+        .item:nth-child(1) { animation-delay: 0.1s; }
+        .item:nth-child(2) { animation-delay: 0.2s; }
+        .item:nth-child(3) { animation-delay: 0.3s; }
+        .item:nth-child(4) { animation-delay: 0.4s; }
+        .item:nth-child(5) { animation-delay: 0.5s; }
+
+        .item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .positive-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #0DA375 100%);
+            color: white;
+        }
+
+        .positive-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .negative-btn {
+            background: linear-gradient(135deg, var(--error) 0%, #DC2626 100%);
+            color: white;
+        }
+
+        .negative-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .delete-btn {
+            background: var(--border);
+            color: var(--gray);
+        }
+
+        .delete-btn:hover {
+            background: var(--gray);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .completed {
+            opacity: 0.7;
+            background: var(--light);
+            text-decoration: line-through;
+        }
+
+        .habit-positive {
+            border-left: 5px solid var(--success);
+        }
+
+        .habit-negative {
+            border-left: 5px solid var(--error);
+        }
+
+        .habit-streak {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .streak-count {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        #savedNote {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            border-left: 5px solid var(--accent);
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from { 
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .planner-container {
+                padding: 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .planner-header h2 {
+                font-size: 2rem;
+            }
+            
+            .section-header h3 {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .planner-container {
+                padding: 15px;
+            }
+            
+            .planner-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .item-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="planner-container">
+        <div class="planner-header">
+            <h2><i class="fas fa-calendar-alt"></i> Digital Planner</h2>
+            <p>Organize your day and track your progress</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-title">
+                <h3><i class="fas fa-trophy"></i> Your Progress</h3>
+                <span id="current-level">Level 1</span>
+            </div>
+            <div class="xp-bar">
+                <div class="xp-progress" id="xp-progress"></div>
+            </div>
+            <div class="xp-info">
+                <span>Productivity Score</span>
+                <span id="xp-count">0/1000 XP</span>
+            </div>
+        </div>
+        
+        <!-- Task Manager -->
+        <div class="planner-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3>Task Manager</h3>
+            </div>
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="Enter a task...">
+                <button class="btn" onclick="addTask()"><i class="fas fa-plus"></i> Add Task</button>
+            </div>
+            <ul class="item-list" id="taskList"></ul>
+        </div>
+        
+        <!-- Daily Planner -->
+        <div class="planner-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Daily Schedule</h3>
+            </div>
+            <div class="input-group">
+                <input type="time" id="timeInput">
+                <input type="text" id="eventInput" placeholder="Enter event...">
+                <button class="btn" onclick="addEvent()"><i class="fas fa-plus"></i> Add Event</button>
+            </div>
+            <ul class="item-list" id="eventList"></ul>
+        </div>
+        
+        <!-- Habit Tracker -->
+        <div class="planner-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Habit Tracker</h3>
+            </div>
+            <div class="input-group">
+                <select id="habitType">
+                    <option value="positive">Create new habit</option>
+                    <option value="negative">Break old habit</option>
+                </select>
+                <input type="text" id="habitInput" placeholder="Describe your habit...">
+                <button class="btn" onclick="addHabit()"><i class="fas fa-plus"></i> Add Habit</button>
+            </div>
+            <ul class="item-list" id="habitList"></ul>
+        </div>
+        
+        <!-- Notes Section -->
+        <div class="planner-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <h3>Notes</h3>
+            </div>
+            <textarea id="noteInput" rows="4" placeholder="Write your notes here..."></textarea>
+            <button class="btn" onclick="saveNote()"><i class="fas fa-save"></i> Save Note</button>
+            <div id="savedNote"></div>
+        </div>
+    </div>
+
+    <script>
+        // Load user progress
+        let userProgress = JSON.parse(localStorage.getItem('userProgress')) || {
+            xp: 0,
+            level: 1,
+            maxXp: 1000
+        };
+
+        // Initialize UI
+        updateProgressUI();
+
+        // Task Manager
+        function addTask() {
+            let taskInput = document.getElementById("taskInput");
+            if (taskInput.value.trim() === "") return;
+            
+            let li = document.createElement("li");
+            li.className = "item";
+            li.innerHTML = `
+                <div class="item-content">${taskInput.value}</div>
+                <div class="item-actions">
+                    <button class="action-btn positive-btn" onclick="completeTask(this)"><i class="fas fa-check"></i></button>
+                    <button class="action-btn delete-btn" onclick="this.parentElement.parentElement.remove()"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            document.getElementById("taskList").appendChild(li);
+            taskInput.value = "";
+            
+            // Add animation
+            li.style.opacity = 0;
+            setTimeout(() => {
+                li.style.transition = "opacity 0.5s ease";
+                li.style.opacity = 1;
+            }, 10);
+        }
+        
+        function completeTask(btn) {
+            const item = btn.parentElement.parentElement;
+            item.classList.add('completed');
+            addXP(10); // 10 XP for completing a task
+            
+            // Add celebration effect
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.style.background = 'linear-gradient(135deg, var(--gold) 0%, #FFD700 100%)';
+        }
+        
+        // Daily Planner
+        function addEvent() {
+            let time = document.getElementById("timeInput").value;
+            let event = document.getElementById("eventInput").value;
+            if (time.trim() === "" || event.trim() === "") return;
+            
+            let li = document.createElement("li");
+            li.className = "item";
+            li.innerHTML = `
+                <div class="item-content"><strong>${time}</strong> - ${event}</div>
+                <div class="item-actions">
+                    <button class="action-btn delete-btn" onclick="this.parentElement.parentElement.remove()"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            document.getElementById("eventList").appendChild(li);
+            document.getElementById("eventInput").value = "";
+            
+            // Add animation
+            li.style.opacity = 0;
+            setTimeout(() => {
+                li.style.transition = "opacity 0.5s ease";
+                li.style.opacity = 1;
+            }, 10);
+        }
+        
+        // Habit Tracker
+        function addHabit() {
+            let habitInput = document.getElementById("habitInput");
+            let habitType = document.getElementById("habitType").value;
+            
+            if (habitInput.value.trim() === "") return;
+            
+            let li = document.createElement("li");
+            li.className = `item ${habitType === 'positive' ? 'habit-positive' : 'habit-negative'}`;
+            li.innerHTML = `
+                <div class="item-content">
+                    ${habitInput.value}
+                    <div class="habit-streak"><i class="fas fa-fire"></i> Streak: <span class="streak-count">0</span> days</div>
+                </div>
+                <div class="item-actions">
+                    <button class="action-btn ${habitType === 'positive' ? 'positive-btn' : 'negative-btn'}" 
+                        onclick="trackHabit(this, '${habitType}')">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            document.getElementById("habitList").appendChild(li);
+            habitInput.value = "";
+            
+            // Add animation
+            li.style.opacity = 0;
+            setTimeout(() => {
+                li.style.transition = "opacity 0.5s ease";
+                li.style.opacity = 1;
+            }, 10);
+        }
+        
+        function trackHabit(btn, type) {
+            const item = btn.parentElement.parentElement;
+            const streakElement = item.querySelector('.streak-count');
+            let currentStreak = parseInt(streakElement.textContent) || 0;
+            
+            if (type === 'positive') {
+                currentStreak++;
+                addXP(5); // 5 XP for positive habit tracking
+                
+                // Add celebration effect
+                btn.innerHTML = '<i class="fas fa-check-double"></i>';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                }, 500);
+            } else {
+                currentStreak = Math.max(0, currentStreak - 1);
+                addXP(-3); // Lose 3 XP for negative habit tracking
+            }
+            
+            streakElement.textContent = currentStreak;
+            
+            // Update fire icon color based on streak
+            const fireIcon = item.querySelector('.fa-fire');
+            if (currentStreak >= 7) {
+                fireIcon.style.color = '#FFD700'; // Gold for high streak
+            } else if (currentStreak >= 3) {
+                fireIcon.style.color = '#FF6B6B'; // Orange for medium streak
+            } else {
+                fireIcon.style.color = '#94A3B8'; // Gray for low streak
+            }
+        }
+        
+        // Notes Section
+        function saveNote() {
+            let noteText = document.getElementById("noteInput").value;
+            if (noteText.trim() === "") return;
+            
+            document.getElementById("savedNote").innerHTML = `
+                <div style="margin-bottom: 10px; font-weight: 600; color: var(--primary);">Saved Note:</div>
+                <div>${noteText}</div>
+            `;
+            document.getElementById("noteInput").value = "";
+            addXP(2); // 2 XP for saving a note
+            
+            // Add animation
+            const savedNote = document.getElementById("savedNote");
+            savedNote.style.transform = "scale(0.95)";
+            setTimeout(() => {
+                savedNote.style.transition = "transform 0.3s ease";
+                savedNote.style.transform = "scale(1)";
+            }, 10);
+        }
+        
+        // XP System
+        function addXP(amount) {
+            userProgress.xp = Math.max(0, userProgress.xp + amount);
+            
+            // Check for level up
+            if (userProgress.xp >= userProgress.maxXp) {
+                userProgress.level++;
+                userProgress.xp = userProgress.xp - userProgress.maxXp;
+                userProgress.maxXp = Math.floor(userProgress.maxXp * 1.2); // Increase XP needed for next level
+                
+                // Show level up notification with animation
+                const levelUp = document.createElement('div');
+                levelUp.innerHTML = `
+                    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+                        <div style="background: white; padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                            <div style="font-size: 3rem; margin-bottom: 20px;">🎉</div>
+                            <h2 style="color: var(--primary); margin-bottom: 10px;">Level Up!</h2>
+                            <p style="color: var(--secondary); margin-bottom: 20px;">You've reached level ${userProgress.level}!</p>
+                            <button onclick="this.parentElement.parentElement.remove()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Continue</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(levelUp);
+            }
+            
+            localStorage.setItem('userProgress', JSON.stringify(userProgress));
+            updateProgressUI();
+        }
+        
+        function updateProgressUI() {
+            const xpProgress = document.getElementById('xp-progress');
+            const currentLevel = document.getElementById('current-level');
+            const xpCount = document.getElementById('xp-count');
+            
+            const percentage = (userProgress.xp / userProgress.maxXp) * 100;
+            
+            xpProgress.style.width = `${percentage}%`;
+            currentLevel.textContent = `Level ${userProgress.level}`;
+            xpCount.textContent = `${userProgress.xp}/${userProgress.maxXp} XP`;
+        }
+    </script>
+</body>
+</html>

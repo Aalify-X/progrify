@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Flashcards | Progrify</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1A2238;
+            --primary-light: #2A3566;
+            --secondary: #FF6B6B;
+            --accent: #4ECDC4;
+            --gold: #D4AF37;
+            --dark: #1E293B;
+            --light: #F8FAFC;
+            --gray: #94A3B8;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --border: #E2E8F0;
+            --card-bg: #FFFFFF;
+            --border-radius: 16px;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .flashcards-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.8s ease;
+        }
+
+        .flashcards-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .flashcards-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--gold) 0%, #FFD700 100%);
+            border-radius: 2px;
+        }
+
+        .flashcards-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .flashcards-header p {
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: var(--shadow);
+            animation: slideDown 0.6s ease;
+        }
+
+        .progress-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-title h3 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .xp-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .xp-progress {
+            height: 100%;
+            background: linear-gradient(135deg, var(--gold) 0%, #FFD700 100%);
+            width: 0%;
+            border-radius: 10px;
+            transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .xp-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .xp-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 10px;
+        }
+
+        .flashcard-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--accent);
+            transition: var(--transition);
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+
+        .flashcard-section:nth-child(1) { animation-delay: 0.1s; }
+        .flashcard-section:nth-child(2) { animation-delay: 0.2s; }
+
+        .flashcard-section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(26, 34, 56, 0.2);
+        }
+
+        .section-header h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input, textarea {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+            background: var(--light);
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 34, 56, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 5px 15px rgba(26, 34, 56, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(26, 34, 56, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--accent) 0%, #3BBBB3 100%);
+        }
+
+        .flashcards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .flashcard {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            perspective: 1000px;
+        }
+
+        .flashcard:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        .flashcard-back {
+            background: white;
+            color: var(--primary);
+            transform: rotateY(180deg);
+            border: 2px solid var(--primary);
+        }
+
+        .flashcard-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            font-size: 0.9rem;
+            background: var(--border);
+            color: var(--dark);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-btn.delete {
+            background: linear-gradient(135deg, var(--error) 0%, #DC2626 100%);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--border);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .flashcards-container {
+                padding: 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .flashcards-header h2 {
+                font-size: 2rem;
+            }
+            
+            .section-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .flashcards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .flashcards-container {
+                padding: 15px;
+            }
+            
+            .flashcards-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .flashcard {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flashcards-container">
+        <div class="flashcards-header">
+            <h2><i class="fas fa-brain"></i> Smart Flashcards</h2>
+            <p>Boost your memory with intelligent spaced repetition</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-title">
+                <h3><i class="fas fa-trophy"></i> Your Progress</h3>
+                <span id="current-level">Level 1</span>
+            </div>
+            <div class="xp-bar">
+                <div class="xp-progress" id="xp-progress"></div>
+            </div>
+            <div class="xp-info">
+                <span>Memory Mastery</span>
+                <span id="xp-count">0/1000 XP</span>
+            </div>
+        </div>
+        
+        <!-- Create Flashcard -->
+        <div class="flashcard-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h3>Create New Flashcard</h3>
+            </div>
+            <div class="input-group">
+                <input type="text" id="flashcard-question" placeholder="Enter question...">
+                <input type="text" id="flashcard-answer" placeholder="Enter answer...">
+                <button class="btn" onclick="addFlashcard()"><i class="fas fa-plus"></i> Add Flashcard</button>
+            </div>
+        </div>
+        
+        <!-- Your Flashcards -->
+        <div class="flashcard-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h3>Your Flashcards</h3>
+            </div>
+            
+            <div id="flashcards-container">
+                <div class="empty-state" id="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No flashcards yet</h3>
+                    <p>Create your first flashcard to get started!</p>
+                </div>
+                <div class="flashcards-grid" id="flashcards-grid" style="display: none;">
+                    <!-- Flashcards will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load user progress
+        let userProgress = JSON.parse(localStorage.getItem('userProgress')) || {
+            xp: 0,
+            level: 1,
+            maxXp: 1000
+        };
+
+        // Load flashcards
+        let flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+
+        // Initialize UI
+        updateProgressUI();
+        renderFlashcards();
+
+        // Create Flashcard
+        function addFlashcard() {
+            const questionInput = document.getElementById("flashcard-question");
+            const answerInput = document.getElementById("flashcard-answer");
+            
+            const question = questionInput.value.trim();
+            const answer = answerInput.value.trim();
+            
+            if (question === "" || answer === "") {
+                return;
+            }
+            
+            // Add new flashcard
+            flashcards.push({
+                id: Date.now(),
+                question: question,
+                answer: answer,
+                createdAt: new Date().toISOString(),
+                mastery: 0 // 0-100 scale
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('flashcards', JSON.stringify(flashcards));
+            
+            // Clear inputs
+            questionInput.value = "";
+            answerInput.value = "";
+            
+            // Update UI
+            renderFlashcards();
+            
+            // Add XP for creating a flashcard
+            addXP(5);
+            
+            // Show confirmation animation
+            const btn = document.querySelector('.btn');
+            btn.innerHTML = '<i class="fas fa-check"></i> Added!';
+            btn.style.background = 'linear-gradient(135deg, var(--success) 0%, #0DA375 100%)';
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-plus"></i> Add Flashcard';
+                btn.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)';
+            }, 1500);
+        }
+        
+        // Render Flashcards
+        function renderFlashcards() {
+            const flashcardsGrid = document.getElementById('flashcards-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (flashcards.length === 0) {
+                flashcardsGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            flashcardsGrid.style.display = 'grid';
+            flashcardsGrid.innerHTML = '';
+            
+            flashcards.forEach((card, index) => {
+                const flashcardElement = document.createElement('div');
+                flashcardElement.className = 'flashcard';
+                flashcardElement.innerHTML = `
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <h3>${card.question}</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>${card.answer}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Add click to flip
+                flashcardElement.addEventListener('click', function() {
+                    this.classList.toggle('flipped');
+                    
+                    // Add XP for studying
+                    if (!this.classList.contains('flipped')) {
+                        addXP(2);
+                    }
+                });
+                
+                // Add delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'action-btn delete';
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteFlashcard(index);
+                };
+                
+                const cardActions = document.createElement('div');
+                cardActions.className = 'flashcard-actions';
+                cardActions.appendChild(deleteBtn);
+                
+                const cardContainer = document.createElement('div');
+                cardContainer.appendChild(flashcardElement);
+                cardContainer.appendChild(cardActions);
+                
+                flashcardsGrid.appendChild(cardContainer);
+                
+                // Add animation
+                flashcardElement.style.opacity = 0;
+                setTimeout(() => {
+                    flashcardElement.style.transition = "opacity 0.5s ease";
+                    flashcardElement.style.opacity = 1;
+                }, index * 100);
+            });
+        }
+        
+        // Delete Flashcard
+        function deleteFlashcard(index) {
+            if (confirm("Are you sure you want to delete this flashcard?")) {
+                flashcards.splice(index, 1);
+                localStorage.setItem('flashcards', JSON.stringify(flashcards));
+                renderFlashcards();
+            }
+        }
+        
+        // XP System
+        function addXP(amount) {
+            userProgress.xp = Math.max(0, userProgress.xp + amount);
+            
+            // Check for level up
+            if (userProgress.xp >= userProgress.maxXp) {
+                userProgress.level++;
+                userProgress.xp = userProgress.xp - userProgress.maxXp;
+                userProgress.maxXp = Math.floor(userProgress.maxXp * 1.2); // Increase XP needed for next level
+                
+                // Show level up notification
+                const levelUp = document.createElement('div');
+                levelUp.innerHTML = `
+                    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+                        <div style="background: white; padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                            <div style="font-size: 3rem; margin-bottom: 20px;">🎉</div>
+                            <h2 style="color: var(--primary); margin-bottom: 10px;">Level Up!</h2>
+                            <p style="color: var(--secondary); margin-bottom: 20px;">You've reached level ${userProgress.level}!</p>
+                            <button onclick="this.parentElement.parentElement.remove()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Continue</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(levelUp);
+            }
+            
+            localStorage.setItem('userProgress', JSON.stringify(userProgress));
+            updateProgressUI();
+        }
+        
+        function updateProgressUI() {
+            const xpProgress = document.getElementById('xp-progress');
+            const currentLevel = document.getElementById('current-level');
+            const xpCount = document.getElementById('xp-count');
+            
+            const percentage = (userProgress.xp / userProgress.maxXp) * 100;
+            
+            xpProgress.style.width = `${percentage}%`;
+            currentLevel.textContent = `Level ${userProgress.level}`;
+            xpCount.textContent = `${userProgress.xp}/${userProgress.maxXp} XP`;
+        }
+    </script>
+</body>
+</html>
