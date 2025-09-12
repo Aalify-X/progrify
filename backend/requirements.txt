@@ -15,7 +15,8 @@ transformers==4.30.2
 tokenizers==0.13.3  # matches transformers; prebuilt wheels exist for Python <=3.12
 
 # Torch CPU-only
-torch==2.8.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+torch==2.8.0
+
 
 # HuggingFace utilities
 huggingface_hub==0.16.4
