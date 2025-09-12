@@ -1,14 +1,27 @@
-Flask
-Flask-Cors
+# Core web
+Flask==3.1.2
+Flask-Cors==6.0.1
+gunicorn==23.0.0
+python-dotenv==1.1.1
 requests>=2.31.0
-gunicorn
-python-dotenv
-PyPDF2
-python-docx
+
+# Document handling
+PyPDF2==3.0.1
+python-docx==1.2.0
+lxml>=4.9.3  # required by python-docx
+
+# Transformers & Tokenizers (prebuilt wheels)
 transformers==4.30.2
-tokenizers==0.13.3  # exact version matching prebuilt wheel
+tokenizers==0.13.3  # matches transformers; prebuilt wheels exist for Python <=3.12
+
+# Torch CPU-only
 torch==2.8.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
+# HuggingFace utilities
 huggingface_hub==0.16.4
-accelerate==0.20.3  # For model optimization
+accelerate==0.20.3
+
+# Misc
 whop>=1.0.0
+tqdm>=4.67.1
 
