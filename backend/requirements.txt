@@ -6,9 +6,9 @@ requests
 PyPDF2
 python-docx
 lxml
-transformers>=4.41.0
-tokenizers>=0.19.1
-torch==2.2.2+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+transformers
+tokenizers
+torch
 huggingface-hub
 accelerate
 tqdm
