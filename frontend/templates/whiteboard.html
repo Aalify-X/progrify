@@ -510,9 +510,14 @@
 </head>
 <body>
     <div class="whiteboard-container">
-        <div class="whiteboard-header">
-            <h2><i class="fas fa-paint-brush"></i> Creative Canvas</h2>
-            <p>Express your ideas freely with our digital whiteboard</p>
+        <div class="whiteboard-header" style="position: relative;">
+            <div>
+                <h2><i class="fas fa-paint-brush"></i> Creative Canvas</h2>
+                <p>Express your ideas freely with our digital whiteboard</p>
+            </div>
+            <a href="/" class="home-button" style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #1A2238 0%, #2A3566 100%); color: white; border: none; padding: 10px 20px; border-radius: 16px; cursor: pointer; font-weight: 600; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 5px 15px rgba(26, 34, 56, 0.2); z-index: 10; text-decoration: none; font-family: 'Inter', sans-serif;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(26, 34, 56, 0.3)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 5px 15px rgba(26, 34, 56, 0.2)';">
+                <i class="fas fa-home"></i> Home
+            </a>
         </div>
         
         <div class="progress-container">

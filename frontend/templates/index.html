@@ -311,92 +311,6 @@
             transform: translateY(-2px);
         }
 
-        /* Stats Overview - Smaller and less prominent */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 1.25rem;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            text-align: center;
-            border: 1px solid var(--border);
-            animation: fadeInUp 0.8s ease;
-            animation-fill-mode: both;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.2s; }
-        .stat-card:nth-child(3) { animation-delay: 0.3s; }
-        .stat-card:nth-child(4) { animation-delay: 0.4s; }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 0;
-            background: linear-gradient(to bottom, var(--gold), var(--secondary));
-            transition: height 0.5s ease;
-        }
-
-        .stat-card:hover::before {
-            height: 100%;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            margin: 0 auto 0.75rem;
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--primary);
-            transition: var(--transition);
-        }
-
-        .stat-card:hover .stat-icon {
-            transform: scale(1.1) rotate(5deg);
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-        }
-
-        .stat-title {
-            font-size: 0.8rem;
-            color: var(--secondary);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            transition: var(--transition);
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            transition: var(--transition);
-        }
-
-        .stat-card:hover .stat-value {
-            color: var(--gold);
-        }
-
         /* Features Grid - More prominent and elegant */
         .section-title {
             font-family: 'Playfair Display', serif;
@@ -749,46 +663,11 @@
                     <button class="btn btn-outline" onclick="window.location.reload()">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
-                    <button class="btn btn-primary">
+                    <button class="btn btn-primary" onclick="window.open('https://payhip.com/b/oAtdU', '_blank')">
                         <i class="fas fa-crown"></i> Get Ownership
                     </button>
                 </div>
             </header>
-
-            <!-- Stats Overview - Smaller and less prominent -->
-            <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="stat-title">Total XP</div>
-                    <div class="stat-value">1,250</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-title">Tasks Completed</div>
-                    <div class="stat-value">48</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-fire"></i>
-                    </div>
-                    <div class="stat-title">Active Streak</div>
-                    <div class="stat-value">7 days</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="stat-title">Productivity</div>
-                    <div class="stat-value">82%</div>
-                </div>
-            </div>
 
             <!-- Tools Section - More prominent and elegant -->
             <h2 class="section-title">Premium Features</h2>
@@ -875,25 +754,6 @@
                 });
             });
             
-            // Animate stats on scroll
-            const stats = document.querySelectorAll('.stat-card');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = 1;
-                        entry.target.style.transform = 'translateY(0)';
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            stats.forEach(stat => {
-                stat.style.opacity = 0;
-                stat.style.transform = 'translateY(20px)';
-                stat.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(stat);
-            });
-
             // Add subtle parallax effect to feature cards
             document.addEventListener('mousemove', function(e) {
                 const xAxis = (window.innerWidth / 2 - e.pageX) / 25;

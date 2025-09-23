@@ -53,6 +53,33 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-lg);
             animation: fadeIn 0.8s ease;
+            position: relative;
+        }
+
+        .home-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 5px 15px rgba(26, 34, 56, 0.2);
+            z-index: 10;
+            text-decoration: none;
+        }
+
+        .home-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(26, 34, 56, 0.3);
         }
 
         .planner-header {
@@ -424,6 +451,13 @@
             .section-header h3 {
                 font-size: 1.2rem;
             }
+            
+            .home-button {
+                top: 15px;
+                right: 15px;
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -448,11 +482,22 @@
             .item-actions {
                 align-self: flex-end;
             }
+            
+            .home-button {
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="planner-container">
+        <a href="/" class="home-button">
+            <i class="fas fa-home"></i> Home
+        </a>
+        
         <div class="planner-header">
             <h2><i class="fas fa-calendar-alt"></i> Digital Planner</h2>
             <p>Organize your day and track your progress</p>
